@@ -1,3 +1,4 @@
+<style>
 /* 屏幕适配 */
 @media only screen and (min-width: 1200px) {
     .ui.container {
@@ -29,13 +30,7 @@ body {
     background-position: top !important;
     background-repeat: no-repeat !important;
     background-size: cover !important;
-/*
-每日一图: "https://api.dujin.org/bing/1920.php"
-随机风景: "https://api.cyrilstudio.top/bing/image.php/bing?rand=true"
-随机动漫: "https://img.xjh.me/random_img.php?type=bg&return=302"
-必应: "https://tuapi.eees.cc/api.php?category=biying&type=302"
-*/
-    background-image: url(https://bing-wallpaper.narutos.top/?rand=true) !important;
+    background-image: url(https://blog.mochen.one/upload/2023/01/104786152_p0.webp) !important;
     font-family: Arial,Helvetica,sans-serif !important;
 }
  
@@ -67,12 +62,12 @@ body {
 /* 大卡片 */
 #app .ui.fluid.accordion {
     background-color: #fbfbfb26 !important;
-    border-radius: 1rem !important;
+    border-radius: 0.4rem !important;
 }
  
 /* 小卡片 */
 .ui.four.cards>.card {
-    border-radius: 1rem !important;
+    border-radius: 0.6rem !important;
     background-color: #fafafaa3 !important;
 }
  
@@ -116,33 +111,35 @@ body {
 .ui.progress {
     border-radius: 50rem !important;
 }
+ 
 .ui.progress .bar {
     min-width: 1.8em !important;
     border-radius: 15px !important;
     line-height: 1.65em !important;
-    color:black
 }
+ 
 .ui.fine.progress> .bar {
-    background-color: #ba45ac !important;
+    background-color: #21ba45 !important;
 }
+ 
 .ui.progress> .bar {
     background-color: #000 !important;
 }
  
 .ui.progress.fine .bar {
-    background-image: linear-gradient(120deg, #d4fc79 0%, #96e6a1 100%);!important;
+    background-color: #21ba45 !important;
 }
  
 .ui.progress.warning .bar {
-    background-image: linear-gradient(to right, #fa709a 0%, #fee140 100%); !important;
+    background-color: #ff9800 !important;
 }
  
 .ui.progress.error .bar {
-    background-image: linear-gradient(to top, #ff0844 0%, #ffb199 100%);important;
+    background-color: #e41e10 !important;
 }
  
 .ui.progress.offline .bar {
-    background-image: linear-gradient(to top, #e6e9f0 0%, #eef1f5 100%); !important;
+    background-color: #000 !important;
 }
  
 /* 上传下载 */
@@ -191,6 +188,7 @@ i.arrow.alternate.circle.up.outline.icon {
     border: 0px solid #fafafaeb !important;
     background: #fafafaeb !important;
 }
+ 
 .ui.top.popup:before {
     border-color: #fafafaeb transparent transparent !important;
 }
@@ -253,7 +251,7 @@ i.arrow.alternate.circle.up.outline.icon {
 .status.cards .ui.content.popup {
     min-width: 20rem !important;
     line-height: 2rem !important;
-    border-radius: 1rem !important;
+    border-radius: 5px !important;
     border: 1px solid transparent !important;
     background-color: #fafafaeb !important;
     font-family: Arial,Helvetica,sans-serif !important;
@@ -274,6 +272,17 @@ i.arrow.alternate.circle.up.outline.icon {
 }
  
 /* 服务页进度条 */
+.service-status .good {
+    background-color: #21ba45 !important;
+}
+ 
+.service-status .danger {
+    background-color: red !important;
+}
+ 
+.service-status .warning {
+    background-color: orange !important;
+}
  
 /* 版权 */
 .ui.inverted.segment, .ui.primary.inverted.segment {
@@ -281,3 +290,38 @@ i.arrow.alternate.circle.up.outline.icon {
     font-weight: bold !important;
     background-color: #fafafaa3 !important;
 }
+</style>
+
+<!-- 网页特效 - 樱花 -->
+<script src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/js/yinghua.js"></script>
+
+<!-- 网页鼠标点击特效 - 爱心 -->
+<script src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/js/aixin.js"></script>
+
+<!-- 网页鼠标点击特效 - 烟花波纹 -->
+<script src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/js/yanhuabowen.js"></script>
+
+<!-- 网页特效 - 蜘蛛网 -->
+<script src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/js/zhizhuwang.js"></script>
+
+<!-- 鼠标特效 - 小星星拖尾 -->
+<span class="js-cursor-container"></span>
+<script src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/js/xiaoxingxing.js"></script>
+
+<!--Logo和版权-->
+<script>
+window.onload = function(){
+var avatar=document.querySelector(".item img")
+var footer=document.querySelector("div.is-size-7")
+footer.innerHTML="末晨的探针"
+footer.style.visibility="visible"
+avatar.src="https://blog.mochen.one/upload/2022/11/%E4%B8%8B%E8%BD%BD.webp"
+avatar.style.visibility="visible"
+}
+var faviconurl="https://blog.mochen.one/upload/2022/11/%E4%B8%8B%E8%BD%BD.webp" ;                  
+var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+link.type = 'image/x-icon';
+link.rel = 'shortcut icon';
+link.href = faviconurl;
+document.getElementsByTagName('head')[0].appendChild(link);
+</script>
