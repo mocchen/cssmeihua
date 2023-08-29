@@ -1,15 +1,15 @@
-/* 去除通知栏 右上角 X */
-.notify-render .hope-close-button{
-	display: none;
-}
+<!--Alist V3建议添加的，已经默认添加了，如果你的没有建议加上-->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=String.prototype.replaceAll"></script>
+
+<style>
 /*白天背景图*/
 .hope-ui-light{
-  background-image: url("https://bing-wallpaper.narutos.top/?rand=true") !important;
+  background-image: url("https://blog.mochen.one/upload/2022/11/a9ut5-orpff.webp") !important;
   background-repeat:no-repeat;background-size:cover;background-attachment:fixed;background-position-x:center;
 }
 /*夜间背景图*/
 .hope-ui-dark {
-    background-image: url(https://bing-wallpaper.narutos.top/?rand=true) !important;
+    background-image: url(https://blog.mochen.one/upload/2022/11/anime-girl-raining-are-you-still-in-pain-board-ad-windows-WallpaperMaiden_.webp) !important;
     background-repeat:no-repeat;background-size:cover;background-attachment:fixed;background-position-x:center;
 }
 /*主列表透明*/
@@ -39,41 +39,20 @@ background-color: rgba(255, 255, 255, 0.5) !important;
     background-color: rgba(255, 255, 255, 0) !important;
 }
 
-/*底部CSS，.APP .tanle这三个一起的*/
-dibu {
+/* 底部CSS，.APP .tanle这三个一起的 */
+.dibu {
     border-top: 0px;
     position: absolute;
     bottom: 0;
     width: 100%;
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
 }
 .App {
     min-height: 85vh;
 }
-.table {
+.tanle {
     margin: auto;
 }
-/*去掉底部*/
-.footer {
-    display: none !important;
-}
 
-/*全局字体*/
-*{font-family:LXGW WenKai}
-*{font-weight:bold}
-body {font-family: LXGW WenKai;}
-
-
-/*渐变背景CSS*/
-#canvas-basic {
-	position: fixed;
-	display: block;
-	width: 100%;
-	height: 100%;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	z-index: -999;
-}
+</style>
