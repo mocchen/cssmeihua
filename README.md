@@ -38,7 +38,7 @@
 <link href="https://npm.elemecdn.com/font6pro@6.0.1/css/all.min.css" rel="stylesheet">
 
 <!--引入Alist的css样式-->
-<link rel="stylesheet" href="https://raw.githubusercontent.com/mocchen/cssmeihua/mochen/css/alist.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/css/alist.css" />
 ```
 ### 自定义内容
 ```shell
