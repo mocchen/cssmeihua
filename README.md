@@ -3,7 +3,7 @@
 ## 探针美化
 ```shell
 <!-- 引入css -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/css/nezha.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/css/nezhacss.css">
 
 <!-- 底部 -->
 <script src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/nezha.js"></script>
