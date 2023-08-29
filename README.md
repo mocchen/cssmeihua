@@ -3,26 +3,26 @@
 ## 探针美化
 ```shell
 <!-- 引入css -->
-<link rel="stylesheet" href="https://raw.githubusercontent.com/mocchen/cssmeihua/mochen/css/nezha.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/css/nezha.css">
 
 <!-- 底部 -->
-<script src="https://raw.githubusercontent.com/mocchen/cssmeihua/mochen/js/nezha.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/nezha.js"></script>
 
 <!-- 网页特效 - 樱花 -->
-<script src="https://raw.githubusercontent.com/mocchen/cssmeihua/mochen/js/yinghua.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/js/yinghua.js"></script>
 
 <!-- 网页鼠标点击特效 - 爱心 -->
-<script src="https://raw.githubusercontent.com/mocchen/cssmeihua/mochen/js/aixin.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/js/aixin.js"></script>
 
 <!-- 网页鼠标点击特效 - 烟花波纹 -->
-<script src="https://raw.githubusercontent.com/mocchen/cssmeihua/mochen/js/yanhuabowen.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/js/yanhuabowen.js"></script>
 
 <!-- 网页特效 - 蜘蛛网 -->
-<script src="https://raw.githubusercontent.com/mocchen/cssmeihua/mochen/js/zhizhuwang.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/js/zhizhuwang.js"></script>
 
 <!-- 鼠标特效 - 小星星拖尾 -->
 <span class="js-cursor-container"></span>
-<script src="https://raw.githubusercontent.com/mocchen/cssmeihua/mochen/js/xiaoxingxing.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/js/xiaoxingxing.js"></script>
 ```
 ## Alist美化
 ### 自定义头部
