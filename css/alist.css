@@ -4,7 +4,7 @@
 <style>
 /*白天背景图*/
 .hope-ui-light{
-  background-image: url("https://blog.mochen.one/upload/2022/11/a9ut5-orpff.webp") !important;
+  background-image: url(https://blog.mochen.one/upload/2022/11/a9ut5-orpff.webp) !important;
   background-repeat:no-repeat;background-size:cover;background-attachment:fixed;background-position-x:center;
 }
 /*夜间背景图*/
