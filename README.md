@@ -42,31 +42,42 @@
 ```
 ### 自定义内容
 ```shell
-<div id="customize">
-    <div>
-        <br />
-        <center class="dibu">
-            <div style="line-height: 20px; font-size: 9pt; font-weight: bold;">
-                <span>
-                    "
-                    <span style="color: rgb(255, 255, 255); font-weight: bold;" id="hitokoto">
-                        <a href="#" id="hitokoto_text">
-                            "人间烟火气，最抚凡人心."
-                        </a>
-                    </span> "
-                </span>
-                <p style="margin-left: 10rem; font-size: 8pt;">
-                    <small>
-                        —— Mochen
-                    </small>
-                </p>
-            </div>
-        </center>
-        <br />
-        <br />
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        #customize {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            background-color: transparent; /* 背景透明 */
+            color: #fff;
+            padding: 10px;
+        }
+        
+        #hitokoto {
+            color: #ffffff;
+            font-weight: bold;
+        }
+    </style>
+</head>
+    <!-- 一言 API 部分放在左下角 -->
+    <div id="customize">
+        <span>
+            "<span id="hitokoto">
+                <a href="#" id="hitokoto_text">
+                    "人间烟火气，最抚凡人心."
+                </a>
+            </span>"
+        </span>
+        <p style="font-size: 8pt;">
+            <small>
+                —— Mochen
+            </small>
+        </p>
     </div>
-    <!--一言API-->
+    <!-- 一言 API -->
     <script src="https://v1.hitokoto.cn/?encode=js&select=%23hitokoto" defer></script>
-</div>
-
+</body>
+</html>
 ```
