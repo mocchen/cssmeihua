@@ -80,4 +80,19 @@
     <script src="https://v1.hitokoto.cn/?encode=js&select=%23hitokoto" defer></script>
 </body>
 </html>
+
+<!-- 网页特效 - 樱花 -->
+<script src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/js/yinghua.js"></script>
+
+<!-- 网页鼠标点击特效 - 爱心 -->
+<script src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/js/aixin.js"></script>
+
+<!-- 网页鼠标点击特效 - 烟花波纹 -->
+<script src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/js/yanhuabowen.js"></script>
+
+<!-- 网页特效 - 蜘蛛网 -->
+<script src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/js/zhizhuwang.js"></script>
+
+<!-- 鼠标特效 - 小星星拖尾 -->
+<span class="js-cursor-container"></span>
 ```
