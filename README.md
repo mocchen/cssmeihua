@@ -3,26 +3,26 @@
 ## 探针美化
 ```shell
 <!-- 引入css -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/2E98514DF5A395297392026440B30569/4610153EC2F4FEF0F14333C127392601/css/nezha.css">
+<link rel="stylesheet" href="https://raw.githubusercontent.com/mocchen/cssmeihua/mochen/css/nezha.css">
 
 <!-- 底部 -->
-<script src="https://cdn.jsdelivr.net/gh/2E98514DF5A395297392026440B30569/4610153EC2F4FEF0F14333C127392601/js/nezha.js"></script>
+<script src="https://raw.githubusercontent.com/mocchen/cssmeihua/mochen/js/nezha.js"></script>
 
 <!-- 网页特效 - 樱花 -->
-<script src="https://cdn.jsdelivr.net/gh/2E98514DF5A395297392026440B30569/4610153EC2F4FEF0F14333C127392601/js/yinghua.js"></script>
+<script src="https://raw.githubusercontent.com/mocchen/cssmeihua/mochen/js/yinghua.js"></script>
 
 <!-- 网页鼠标点击特效 - 爱心 -->
-<script src="https://cdn.jsdelivr.net/gh/2E98514DF5A395297392026440B30569/4610153EC2F4FEF0F14333C127392601/js/aixin.js"></script>
+<script src="https://raw.githubusercontent.com/mocchen/cssmeihua/mochen/js/aixin.js"></script>
 
 <!-- 网页鼠标点击特效 - 烟花波纹 -->
-<script src="https://cdn.jsdelivr.net/gh/2E98514DF5A395297392026440B30569/4610153EC2F4FEF0F14333C127392601/js/yanhuabowen.js"></script>
+<script src="https://raw.githubusercontent.com/mocchen/cssmeihua/mochen/js/yanhuabowen.js"></script>
 
 <!-- 网页特效 - 蜘蛛网 -->
-<script src="https://cdn.jsdelivr.net/gh/2E98514DF5A395297392026440B30569/4610153EC2F4FEF0F14333C127392601/js/zhizhuwang.js"></script>
+<script src="https://raw.githubusercontent.com/mocchen/cssmeihua/mochen/js/zhizhuwang.js"></script>
 
 <!-- 鼠标特效 - 小星星拖尾 -->
 <span class="js-cursor-container"></span>
-<script src="https://cdn.jsdelivr.net/gh/2E98514DF5A395297392026440B30569/4610153EC2F4FEF0F14333C127392601/js/xiaoxingxing.js"></script>
+<script src="https://raw.githubusercontent.com/mocchen/cssmeihua/mochen/js/xiaoxingxing.js"></script>
 ```
 ## Alist美化
 ### 自定义头部
@@ -38,7 +38,7 @@
 <link href="https://npm.elemecdn.com/font6pro@6.0.1/css/all.min.css" rel="stylesheet">
 
 <!--引入Alist的css样式-->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/2E98514DF5A395297392026440B30569/4610153EC2F4FEF0F14333C127392601/css/alist.css" />
+<link rel="stylesheet" href="https://raw.githubusercontent.com/mocchen/cssmeihua/mochen/css/alist.css" />
 ```
 ### 自定义内容
 ```shell
