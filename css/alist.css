@@ -1,0 +1,79 @@
+/* 去除通知栏 右上角 X */
+.notify-render .hope-close-button{
+	display: none;
+}
+/*白天背景图*/
+.hope-ui-light{
+  background-image: url("https://bing-wallpaper.narutos.top/?rand=true") !important;
+  background-repeat:no-repeat;background-size:cover;background-attachment:fixed;background-position-x:center;
+}
+/*夜间背景图*/
+.hope-ui-dark {
+    background-image: url(https://bing-wallpaper.narutos.top/?rand=true) !important;
+    background-repeat:no-repeat;background-size:cover;background-attachment:fixed;background-position-x:center;
+}
+/*主列表透明*/
+.obj-box.hope-stack.hope-c-dhzjXW.hope-c-PJLV.hope-c-PJLV-igScBhH-css {
+background-color: rgba(255, 255, 255, 0.5) !important;
+}
+/*readme透明*/
+.hope-c-PJLV.hope-c-PJLV-ikSuVsl-css{
+background-color: rgba(255, 255, 255, 0.5) !important;
+}
+/*顶部右上角切换按钮透明*/
+.hope-c-ivMHWx-hZistB-cv.hope-icon-button{
+background-color: rgba(255, 255, 255, 0.3) !important;
+}
+/*右下角侧边栏按钮透明*/
+.hope-c-PJLV-ijgzmFG-css{
+background-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+
+/*白天模式代码块透明*/
+.hope-ui-light pre{
+    background-color: rgba(255, 255, 255, 0.1) !important;
+}
+/*夜间模式代码块透明*/
+.hope-ui-dark pre {
+    background-color: rgba(255, 255, 255, 0) !important;
+}
+
+/*底部CSS，.APP .tanle这三个一起的*/
+dibu {
+    border-top: 0px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+.App {
+    min-height: 85vh;
+}
+.table {
+    margin: auto;
+}
+/*去掉底部*/
+.footer {
+    display: none !important;
+}
+
+/*全局字体*/
+*{font-family:LXGW WenKai}
+*{font-weight:bold}
+body {font-family: LXGW WenKai;}
+
+
+/*渐变背景CSS*/
+#canvas-basic {
+	position: fixed;
+	display: block;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: -999;
+}
