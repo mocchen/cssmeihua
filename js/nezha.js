@@ -2,9 +2,9 @@
 window.onload = function(){
 var avatar=document.querySelector(".item img")
 var footer=document.querySelector("div.is-size-7")
-document.querySelector("[rel='shortcut icon']").href = "https://s1.img.ink/2022/d2087fb7236f3.png"
-footer.innerHTML="うずまきナルトのクラウドサーバー"
+document.querySelector("[rel='shortcut icon']").href = "https://blog.mochen.one/logo"
+footer.innerHTML="末晨的探针"
 footer.style.visibility="visible"
-avatar.src="https://s1.img.ink/2022/d2087fb7236f3.png"
+avatar.src="https://blog.mochen.one/logo"
 avatar.style.visibility="visible"
 }
