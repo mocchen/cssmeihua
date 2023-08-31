@@ -30,13 +30,6 @@
 <!--Alist V3建议添加的，已经默认添加了，如果你的没有建议加上-->
 <script src="https://polyfill.io/v3/polyfill.min.js?features=String.prototype.replaceAll"></script>
 
-<!--引入字体，全局字体使用-->
-<link rel="stylesheet" href="https://npm.elemecdn.com/lxgw-wenkai-webfont@1.1.0/lxgwwenkai-regular.css" />
-
-<!-- Font6，自定义底部使用和看板娘使用的图标和字体文件-->
-<link type='text/css' rel="stylesheet" href="https://npm.elemecdn.com/font6pro@6.0.1/css/fontawesome.min.css" media='all'>
-<link href="https://npm.elemecdn.com/font6pro@6.0.1/css/all.min.css" rel="stylesheet">
-
 <!--引入Alist的css样式-->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/css/alistcss.css" />
 ```
