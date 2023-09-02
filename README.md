@@ -31,7 +31,7 @@
 <script src="https://polyfill.io/v3/polyfill.min.js?features=String.prototype.replaceAll"></script>
 
 <!--引入Alist的css样式-->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/css/alistcss.css" >
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/css/alistcss.css">
 ```
 ### 自定义内容
 ```shell
