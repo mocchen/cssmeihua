@@ -30,7 +30,7 @@ body {
     background-position: top !important;
     background-repeat: no-repeat !important;
     background-size: cover !important;
-    background-image: url(https://blog.mochen.one/upload/2023/01/104786152_p0.webp) !important;
+    background-image: url(https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/img/104786152_p0.webp) !important;
     font-family: Arial,Helvetica,sans-serif !important;
 }
  
@@ -292,3 +292,36 @@ i.arrow.alternate.circle.up.outline.icon {
 }
 </style>
 
+<!--Logo和版权-->
+<script>
+window.onload = function(){
+var avatar=document.querySelector(".item img")
+var footer=document.querySelector("div.is-size-7")
+footer.innerHTML="末晨的探针"
+footer.style.visibility="visible"
+avatar.src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/img/%E4%B8%8B%E8%BD%BD.webp"
+avatar.style.visibility="visible"
+}
+var faviconurl="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/img/%E4%B8%8B%E8%BD%BD.webp" ;                  
+var link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+link.type = 'image/x-icon';
+link.rel = 'shortcut icon';
+link.href = faviconurl;
+document.getElementsByTagName('head')[0].appendChild(link);
+</script>
+
+<!-- 网页特效 - 樱花 -->
+<script src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/js/yinghua.js"></script>
+
+<!-- 网页鼠标点击特效 - 爱心 -->
+<script src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/js/aixin.js"></script>
+
+<!-- 网页鼠标点击特效 - 烟花波纹 -->
+<script src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/js/yanhuabowen.js"></script>
+
+<!-- 网页特效 - 蜘蛛网 -->
+<script src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/js/zhizhuwang.js"></script>
+
+<!-- 鼠标特效 - 小星星拖尾 -->
+<span class="js-cursor-container"></span>
+<script src="https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/js/xiaoxingxing.js"></script>
