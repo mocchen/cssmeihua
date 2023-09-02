@@ -1,12 +1,15 @@
+<!--Alist V3建议添加的，已经默认添加了，如果你的没有建议加上-->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=String.prototype.replaceAll"></script>
+
 <style>
 /*白天背景图*/
 .hope-ui-light{
-  background-image: url(https://blog.mochen.one/upload/2022/11/a9ut5-orpff.webp) !important;
+  background-image: url(https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/img/111218258_p0.webp) !important;
   background-repeat:no-repeat;background-size:cover;background-attachment:fixed;background-position-x:center;
 }
 /*夜间背景图*/
 .hope-ui-dark {
-    background-image: url(https://blog.mochen.one/upload/2022/11/anime-girl-raining-are-you-still-in-pain-board-ad-windows-WallpaperMaiden_.webp) !important;
+    background-image: url(https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/img/anime-girl-raining-are-you-still-in-pain-board-ad-windows-WallpaperMaiden_.webp) !important;
     background-repeat:no-repeat;background-size:cover;background-attachment:fixed;background-position-x:center;
 }
 /*主列表透明*/
