@@ -286,7 +286,7 @@ i.arrow.alternate.circle.up.outline.icon {
 
 /*鼠标*/
 body {
-    cursor: url(https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/a.cur), default;
+    cursor: url(https://raw.githubusercontent.com/mocchen/cssmeihua/mochen/a.cur), default;
 }
 
 /* 版权 */
