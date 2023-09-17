@@ -283,7 +283,12 @@ i.arrow.alternate.circle.up.outline.icon {
 .service-status .warning {
     background-color: orange !important;
 }
- 
+
+/*鼠标*/
+body {
+    cursor: url(https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/a.cur), default;
+}
+
 /* 版权 */
 .ui.inverted.segment, .ui.primary.inverted.segment {
     color: #000 !important;
