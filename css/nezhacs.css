@@ -2,7 +2,7 @@
 /* 屏幕适配 */
 @media only screen and (min-width: 1200px) {
     .ui.container {
-    width: 80% !important;
+    width: 85% !important;
 }
 }
  
@@ -30,7 +30,7 @@ body {
     background-position: top !important;
     background-repeat: no-repeat !important;
     background-size: cover !important;
-    background-image: url(https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/img/104786152_p0.webp) !important;
+    background-image: url(https://cdn.jsdelivr.net/gh/mocchen/cssmeihua/img/cute-anime-girls-fireworks-festival-lanterns-kimono-apple-candy-blushes-anime-44178.webp) !important;
     font-family: Arial,Helvetica,sans-serif !important;
 }
  
@@ -74,7 +74,7 @@ body {
 .status.cards .wide.column {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
-    height: 3.3rem !important;
+    height: 2.3rem !important;
 }
  
 .status.cards .three.wide.column {
