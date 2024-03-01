@@ -11,12 +11,11 @@ Info="${GREEN}[信息]${NC}"
 Error="${RED}[错误]${NC}"
 Tip="${YELLOW}[提示]${NC}"
 
-# 版权信息
 cop_info(){
 clear
 echo -e "${GREEN}######################################
-#           ${RED}DDNS 一键脚本            ${GREEN}#
-#           作者: ${YELLOW}末晨                ${GREEN}#
+#            ${RED}DDNS 一键脚本            ${GREEN}#
+#             作者: ${YELLOW}末晨              ${GREEN}#
 ######################################${NC}"
 echo
 }
