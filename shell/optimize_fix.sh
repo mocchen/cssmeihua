@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+# 颜色配置
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m'  # 无颜色
+
 # 检测系统发行版
 if [[ -f /etc/redhat-release ]]; then
     release="centos"
@@ -38,7 +45,7 @@ backup_config() {
     cp /etc/sysctl.conf "$backup_dir/sysctl.conf.bak"
     cp /etc/security/limits.conf "$backup_dir/limits.conf.bak"
     cp /etc/systemd/journald.conf "$backup_dir/journald.conf.bak"
-    echo "[信息] 配置文件已备份到 $backup_dir"
+    echo -e "${GREEN}[信息] 配置文件已备份到 $backup_dir${NC}"
 }
 
 # 恢复备份的源函数
@@ -48,7 +55,7 @@ recovery_cof() {
         cp "$backup_dir/limits.conf.bak" /etc/security/limits.conf
         cp "$backup_dir/journald.conf.bak" /etc/systemd/journald.conf
     else
-        echo -e "${RED}开始备份${NC}"
+        echo -e "${YELLOW}开始备份${NC}"
     fi
 }
 
@@ -59,9 +66,9 @@ restore_config() {
         cp "$backup_dir/limits.conf.bak" /etc/security/limits.conf
         cp "$backup_dir/journald.conf.bak" /etc/systemd/journald.conf
         sysctl --system
-        echo "[信息] 原始配置已恢复"
+        echo -e "${GREEN}[信息] 原始配置已恢复${NC}"
     else
-        echo "[错误] 备份文件不存在，无法恢复"
+        echo -e "${RED}[错误] 备份文件不存在，无法恢复${NC}"
     fi
     exit 0
 }
@@ -180,26 +187,26 @@ ForwardToSyslog=no
 EOF
 
     # 应用优化参数
-    echo "[信息] 正在应用 TCP 优化参数..."
+    echo -e "${GREEN}[信息] 正在应用 TCP 优化参数...${NC}"
 
     # 加载 nf_conntrack 模块
     if ! lsmod | grep -q nf_conntrack; then
-        modprobe nf_conntrack && echo "nf_conntrack 模块已加载"
+        modprobe nf_conntrack && echo -e "${GREEN}nf_conntrack 模块已加载${NC}"
     fi
 
     # 确保模块在启动时加载
     if ! grep -q "nf_conntrack" /etc/modules-load.d/nf_conntrack.conf; then
         echo "nf_conntrack" >> /etc/modules-load.d/nf_conntrack.conf
-        echo "nf_conntrack 已添加到开机加载"
+        echo -e "${GREEN}nf_conntrack 已添加到开机加载${NC}"
     fi
     
     sysctl --system
 
-    echo "[信息] TCP 调优完成！"
+    echo -e "${GREEN}[信息] TCP 调优完成！${NC}"
     exit 0
 }
 
-echo "请选择操作："
+echo -e "${BLUE}请选择操作：${NC}"
 echo "1. TCP 调优"
 echo "2. 恢复原始配置"
 echo "0. 退出脚本"
@@ -215,11 +222,11 @@ case "$option" in
         restore_config
         ;;
     0)
-        echo "[信息] 退出脚本"
+        echo -e "${GREEN}[信息] 退出脚本${NC}"
         exit 0
         ;;
     *)
-        echo "[错误] 请输入有效的选项！"
+        echo -e "${RED}[错误] 请输入有效的选项！${NC}"
         exit 1
         ;;
 esac
