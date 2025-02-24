@@ -16,7 +16,7 @@ elif cat /proc/version | grep -q -E -i "ubuntu"; then
 elif cat /proc/version | grep -q -E -i "centos|red hat|redhat"; then
     release="centos"
 else
-    OUT_ERROR "[错误] 不支持的操作系统！"
+    echo -e "${RED}不支持的操作系统！${NC}"
     exit 1
 fi
 
