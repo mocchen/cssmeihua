@@ -21,7 +21,6 @@ else
 fi
 
 # 更新系统
-OUT_ALERT "[信息] 更新系统中！"
 if [[ ${release} == "centos" ]]; then
     yum makecache
     yum install epel-release -y
