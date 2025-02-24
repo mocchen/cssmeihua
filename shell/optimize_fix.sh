@@ -1,5 +1,36 @@
 #!/usr/bin/env bash
 
+# 检测系统发行版
+if [[ -f /etc/redhat-release ]]; then
+    release="centos"
+elif cat /etc/issue | grep -q -E -i "debian|raspbian"; then
+    release="debian"
+elif cat /etc/issue | grep -q -E -i "ubuntu"; then
+    release="ubuntu"
+elif cat /etc/issue | grep -q -E -i "centos|red hat|redhat"; then
+    release="centos"
+elif cat /proc/version | grep -q -E -i "raspbian|debian"; then
+    release="debian"
+elif cat /proc/version | grep -q -E -i "ubuntu"; then
+    release="ubuntu"
+elif cat /proc/version | grep -q -E -i "centos|red hat|redhat"; then
+    release="centos"
+else
+    OUT_ERROR "[错误] 不支持的操作系统！"
+    exit 1
+fi
+
+# 更新系统
+OUT_ALERT "[信息] 更新系统中！"
+if [[ ${release} == "centos" ]]; then
+    yum makecache
+    yum install epel-release -y
+    yum update -y
+else
+    apt update -y
+    apt autoremove --purge -y
+fi
+
 backup_dir="/etc/backup_tcp_tuning"
 
 # 备份配置文件
