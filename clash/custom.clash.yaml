@@ -23,11 +23,10 @@ dns:
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
   fake-ip-filter:
-    - '*.lan'
-    - localhost.ptlogin2.qq.com
     - '*'
     - '+.lan'
     - '+.local'
+    - localhost.ptlogin2.qq.com
     - +.wilds.monsterhunter.com
     - +.capcom.com
     - +.playfabapi.com
