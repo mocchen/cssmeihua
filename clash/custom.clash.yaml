@@ -7,6 +7,7 @@ mode: Rule
 log-level: info
 external-controller: 127.0.0.1:9090
 tcp-concurrent: true
+find-process-mode: strict
 experimental:
   ignore-resolve-fail: true
 dns:
@@ -24,6 +25,17 @@ dns:
   fake-ip-filter:
     - '*.lan'
     - localhost.ptlogin2.qq.com
+    - '*'
+    - '+.lan'
+    - '+.local'
+    - +.wilds.monsterhunter.com
+    - +.capcom.com
+    - +.playfabapi.com
+    - +.playfab.com
+    - +.akamai.net
+    - +.cloudapp.azure.com
+    - +.steamcontent.com
+    - +.steampowered.com
   nameserver:
     - 223.5.5.5
     - https://dns.alidns.com/dns-query
@@ -36,6 +48,10 @@ dns:
     - 117.50.10.10
     - 114.114.114.114
     - https://doh.360.cn/dns-query
+  nameserver-policy:
+    "+.cloudapp.azure.com": [1.1.1.1, 8.8.8.8]
+    "+.monsterhunter.com": [1.1.1.1, 8.8.8.8]
+    "+.capcom.com": [1.1.1.1]
   fallback:
     - 8.8.8.8
     - https://dns.google/dns-query
@@ -47,6 +63,9 @@ dns:
     - tls://dns.rubyfish.cn:853
   fallback-filter:
     geoip: true
+    geoip-code: CN
+    geosite:
+      - gfw
     ipcidr:
       - 240.0.0.0/4
     domain:
@@ -65,11 +84,12 @@ tun:
   device: mochen
   auto-route: true
   auto-detect-interface: true
+  endpoint-independent-nat: true
   dns-hijack:
     - any:53
     - tcp://any:53
   strict-route: true
-  mtu: 1500
+  mtu: 1380
   udp-timeout: 60
 proxies: []
 proxy-groups:
