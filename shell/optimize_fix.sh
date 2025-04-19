@@ -112,6 +112,9 @@ net.core.rmem_max = $rmem_max
 net.core.wmem_max = $wmem_max
 net.core.netdev_max_backlog = $netdev_max_backlog
 net.core.somaxconn = $somaxconn
+net.core.optmem_max = 65536
+net.core.netdev_budget = 600
+net.core.netdev_budget_usecs = 8000
 
 # 启用 IP 转发
 net.ipv4.ip_forward = 1
@@ -121,9 +124,6 @@ net.ipv6.conf.default.forwarding = 1
 # TCP 连接优化
 net.ipv4.tcp_rmem = 4096 87380 67108864
 net.ipv4.tcp_wmem = 4096 16384 67108864
-net.ipv4.udp_mem = 4096 87380 4194304
-net.ipv4.udp_rmem_min = 16384
-net.ipv4.udp_wmem_min = 16384
 net.ipv4.tcp_fin_timeout = 10
 net.ipv4.tcp_max_syn_backlog = 65535
 net.ipv4.tcp_max_tw_buckets = $tcp_max_tw_buckets
@@ -146,6 +146,13 @@ net.ipv4.tcp_fack = 1
 net.ipv4.tcp_sack = 1
 net.ipv4.tcp_dsack = 1
 net.ipv4.tcp_adv_win_scale = 2
+net.ipv4.tcp_notsent_lowat = 16384
+
+# UDP优化
+net.ipv4.udp_gro = 1  
+net.ipv4.udp_mem = 4096 87380 4194304
+net.ipv4.udp_rmem_min = 16384
+net.ipv4.udp_wmem_min = 16384
 
 # NAT 连接追踪优化
 net.netfilter.nf_conntrack_max = $conntrack_max
@@ -156,6 +163,8 @@ net.netfilter.nf_conntrack_tcp_timeout_close_wait = 60
 net.netfilter.nf_conntrack_tcp_timeout_fin_wait = 60
 net.netfilter.nf_conntrack_tcp_timeout_syn_recv = 30
 net.netfilter.nf_conntrack_tcp_be_liberal = 1
+net.netfilter.nf_conntrack_udp_timeout = 60
+net.netfilter.nf_conntrack_udp_timeout_stream = 180
 
 # 默认使用 fq 调度器
 net.core.default_qdisc = fq
