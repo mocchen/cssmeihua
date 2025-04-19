@@ -121,6 +121,7 @@ net.ipv6.conf.default.forwarding = 1
 # TCP 连接优化
 net.ipv4.tcp_rmem = 4096 87380 67108864
 net.ipv4.tcp_wmem = 4096 16384 67108864
+net.ipv4.udp_mem = 4096 87380 4194304
 net.ipv4.udp_rmem_min = 16384
 net.ipv4.udp_wmem_min = 16384
 net.ipv4.tcp_fin_timeout = 10
