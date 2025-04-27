@@ -93,6 +93,18 @@ optimize_system() {
 
     wmem_max=$((memory_mb * 1024 * 8))
     wmem_max=$((wmem_max > 67108864 ? 67108864 : wmem_max))
+    
+    # 动态设置 rmem_default 和 wmem_default
+    if [ "$memory_mb" -lt 2048 ]; then
+        rmem_default=524288
+        wmem_default=524288
+    elif [ "$memory_mb" -lt 8192 ]; then
+        rmem_default=1048576
+        wmem_default=1048576
+    else
+        rmem_default=2097152
+        wmem_default=2097152
+    fi
 
     netdev_max_backlog=$((memory_mb * 128))
     netdev_max_backlog=$((netdev_max_backlog > 262144 ? 262144 : netdev_max_backlog))  # 10Gbps 上限
@@ -108,6 +120,8 @@ optimize_system() {
 fs.file-max = $fs_file_max
 
 # 增强网络缓冲区
+net.core.rmem_default = $rmem_default
+net.core.wmem_default = $wmem_default
 net.core.rmem_max = $rmem_max
 net.core.wmem_max = $wmem_max
 net.core.netdev_max_backlog = $netdev_max_backlog
