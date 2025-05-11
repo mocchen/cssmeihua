@@ -1,0 +1,294 @@
+port: 7890
+socks-port: 7891
+allow-lan: true
+ipv6: true
+bind-address: "*"
+mode: Rule
+log-level: info
+external-controller: 127.0.0.1:9090
+tcp-concurrent: true
+find-process-mode: strict
+experimental:
+  ignore-resolve-fail: true
+dns:
+  enable: true
+  ipv6: false
+  default-nameserver:
+    - 223.5.5.5
+    - 180.76.76.76
+    - 119.29.29.29
+    - 117.50.11.11
+    - 117.50.10.10
+    - 114.114.114.114
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter-mode: blacklist
+  fake-ip-filter:
+    - '*.lan'
+    - '*.local'
+    - '*.arpa'
+    - +.stun.*.*
+    - +.stun.*.*.*
+    - +.stun.*.*.*.*
+    - +.stun.*.*.*.*.*
+    - time.*.com
+    - ntp.*.com
+    - time.*.com
+    - +.market.xiaomi.com
+    - '*.msftncsi.com'
+    - www.msftconnecttest.com
+    - localhost.ptlogin2.qq.com
+    - +.wilds.monsterhunter.com
+    - +.capcom.com
+    - +.playfabapi.com
+    - +.playfab.com
+    - +.akamai.net
+    - +.cloudapp.azure.com
+    - +.steamcontent.com
+    - +.steampowered.com
+  nameserver:
+    - 223.5.5.5
+    - https://dns.alidns.com/dns-query
+    - tls://dns.alidns.com
+    - 119.29.29.29
+    - https://doh.pub/dns-query
+    - tls://dot.pub
+    - 180.76.76.76
+    - 117.50.11.11
+    - 117.50.10.10
+    - 114.114.114.114
+    - https://doh.360.cn/dns-query
+  nameserver-policy:
+    "+.cloudapp.azure.com": [1.1.1.1, 8.8.8.8]
+    "+.monsterhunter.com": [1.1.1.1, 8.8.8.8]
+    "+.capcom.com": [1.1.1.1]
+  fallback:
+    - 8.8.8.8
+    - https://dns.google/dns-query
+    - tls://dns.google:853
+    - 1.1.1.1
+    - https://cloudflare-dns.com/dns-query
+    - tls://1.0.0.1:853
+    - https://dns.rubyfish.cn/dns-query
+    - tls://dns.rubyfish.cn:853
+  fallback-filter:
+    geoip: true
+    geoip-code: CN
+    geosite:
+      - gfw
+    ipcidr:
+      - 240.0.0.0/4
+    domain:
+      - +.google.com
+      - +.facebook.com
+      - +.youtube.com
+      - +.githubusercontent.com
+      - +.googlevideo.com
+      - +.msftconnecttest.com
+      - +.msftncsi.com
+      - msftconnecttest.com
+      - msftncsi.com
+tun:
+  enable: false
+  stack: system
+  device: mochen
+  auto-route: true
+  auto-detect-interface: true
+  endpoint-independent-nat: true
+  dns-hijack:
+    - any:53
+    - tcp://any:53
+  strict-route: true
+  mtu: 1380
+  udp-timeout: 180
+proxies: []
+
+proxy-groups:
+  - name: 🚀 默认代理
+    type: select
+    proxies:
+      - ♻️ 自动选择
+      - 🔯 故障转移
+      - 🔮 负载均衡
+
+  - name: 🎮 怪物猎人荒野
+    type: select
+    proxies: []
+
+  - name: 📹 YouTube
+    type: select
+    proxies:
+      - 🚀 默认代理
+      - ♻️ 自动选择
+      - DIRECT
+
+  - name: 🍀 Google
+    type: select
+    proxies:
+      - 🚀 默认代理
+      - ♻️ 自动选择
+      - DIRECT
+
+  - name: 🤖 ChatGPT
+    type: select
+    proxies:
+      - 🚀 默认代理
+      - ♻️ 自动选择
+      - DIRECT
+
+  - name: 👨🏿‍💻 GitHub
+    type: select
+    proxies:
+      - 🚀 默认代理
+      - ♻️ 自动选择
+      - DIRECT
+
+  - name: 🐬 OneDrive
+    type: select
+    proxies:
+      - 🚀 默认代理
+      - ♻️ 自动选择
+      - DIRECT
+
+  - name: 🪟 Microsoft
+    type: select
+    proxies:
+      - 🚀 默认代理
+      - ♻️ 自动选择
+      - DIRECT
+
+  - name: 🎵 TikTok
+    type: select
+    proxies:
+      - 🚀 默认代理
+      - ♻️ 自动选择
+      - DIRECT
+
+  - name: 📲 Telegram
+    type: select
+    proxies:
+      - 🚀 默认代理
+      - ♻️ 自动选择
+      - DIRECT
+
+  - name: 🎥 NETFLIX
+    type: select
+    proxies:
+      - 🚀 默认代理
+      - ♻️ 自动选择
+      - DIRECT
+
+  - name: ✈️ Speedtest
+    type: select
+    proxies:
+      - 🚀 默认代理
+      - ♻️ 自动选择
+      - DIRECT
+
+  - name: 💶 PayPal
+    type: select
+    proxies:
+      - 🚀 默认代理
+      - ♻️ 自动选择
+      - DIRECT
+
+  - name: 🍎 Apple
+    type: select
+    proxies:
+      - 🚀 默认代理
+      - ♻️ 自动选择
+      - DIRECT
+
+  - name: 🐟 漏网之鱼
+    type: select
+    proxies:
+      - 🚀 默认代理
+      - ♻️ 自动选择
+      - DIRECT
+
+  - name: 🎯 直连
+    type: select
+    proxies:
+      - DIRECT
+      - 🚀 默认代理
+
+  - name: ♻️ 自动选择
+    type: url-test
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    proxies: []
+
+  - name: 🔯 故障转移
+    type: fallback
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    proxies: []
+
+  - name: 🔮 负载均衡
+    type: load-balance
+    strategy: consistent-hashing
+    url: https://www.gstatic.com/generate_204
+    interval: 300
+    tolerance: 50
+    proxies: []
+      
+# 规则匹配
+# 此规则部分没有做防泄露处理，因为弊严重大于利！
+rules:
+  - PROCESS-NAME,CrashReport.exe,🎮 怪物猎人荒野
+  - PROCESS-NAME,InstallerMessage.exe,🎮 怪物猎人荒野
+  - PROCESS-NAME,MonsterHunterWilds.exe,🎮 怪物猎人荒野
+  - DOMAIN-SUFFIX,mochen.one,🚀 默认代理
+  - RULE-SET,private_domain,🎯 直连
+  - RULE-SET,apple_domain,🍎 Apple
+  - RULE-SET,proxylite,🚀 默认代理
+  - RULE-SET,ai,🤖 ChatGPT
+  - RULE-SET,github_domain,👨🏿‍💻 GitHub
+  - RULE-SET,youtube_domain,📹 YouTube
+  - RULE-SET,google_domain,🍀 Google
+  - RULE-SET,onedrive_domain,🐬 OneDrive
+  - RULE-SET,microsoft_domain,🪟 Microsoft
+  - RULE-SET,tiktok_domain,🎵 TikTok
+  - RULE-SET,speedtest_domain,✈️ Speedtest
+  - RULE-SET,telegram_domain,📲 Telegram
+  - RULE-SET,netflix_domain,🎥 NETFLIX
+  - RULE-SET,paypal_domain,💶 PayPal
+  - RULE-SET,gfw_domain,🚀 默认代理
+  - RULE-SET,geolocation-!cn,🚀 默认代理
+  - RULE-SET,cn_domain,🎯 直连
+  - RULE-SET,google_ip,🍀 Google,no-resolve
+  - RULE-SET,netflix_ip,🎥 NETFLIX,no-resolve
+  - RULE-SET,telegram_ip,📲 Telegram,no-resolve
+  - RULE-SET,cn_ip,🎯 直连
+  - MATCH,🐟 漏网之鱼
+
+# 规则集
+rule-anchor:
+  ip: &ip {type: http, interval: 86400, behavior: ipcidr, format: mrs}
+  domain: &domain {type: http, interval: 86400, behavior: domain, format: mrs}
+  class: &class {type: http, interval: 86400, behavior: classical, format: text}
+rule-providers: 
+  private_domain: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.mrs"}
+  proxylite: { <<: *class, url: "https://raw.githubusercontent.com/qichiyuhub/rule/refs/heads/main/proxy.list"}
+  ai: { <<: *domain, url: "https://github.com/MetaCubeX/meta-rules-dat/raw/refs/heads/meta/geo/geosite/category-ai-!cn.mrs" }
+  youtube_domain: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/youtube.mrs"}
+  google_domain: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/google.mrs"}
+  github_domain: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/github.mrs"}
+  telegram_domain: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/telegram.mrs"}
+  netflix_domain: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/netflix.mrs"}
+  paypal_domain: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/paypal.mrs"}
+  onedrive_domain: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/onedrive.mrs"}
+  microsoft_domain: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/microsoft.mrs"}
+  apple_domain: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/apple-cn.mrs"}
+  speedtest_domain: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/ookla-speedtest.mrs"}
+  tiktok_domain: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/tiktok.mrs"}
+  gfw_domain: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/gfw.mrs"}
+  geolocation-!cn: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/geolocation-!cn.mrs"}
+  cn_domain: { <<: *domain, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/cn.mrs"}
+  
+  cn_ip: { <<: *ip, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.mrs"}
+  google_ip: { <<: *ip, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/google.mrs"}
+  telegram_ip: { <<: *ip, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/telegram.mrs"}
+  netflix_ip: { <<: *ip, url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/netflix.mrs"}
