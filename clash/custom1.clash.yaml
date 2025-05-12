@@ -25,27 +25,132 @@ dns:
   fake-ip-filter-mode: blacklist
   fake-ip-filter:
     - '*.lan'
+    - '*.localdomain'
+    - '*.example'
+    - '*.invalid'
+    - '*.localhost'
+    - '*.test'
     - '*.local'
-    - '*.arpa'
-    - +.stun.*.*
-    - +.stun.*.*.*
-    - +.stun.*.*.*.*
-    - +.stun.*.*.*.*.*
+    - '*.home.arpa'
+    - '*.direct'
     - time.*.com
+    - time.*.gov
+    - time.*.edu.cn
+    - time.*.apple.com
+    - time-ios.apple.com
+    - time1.*.com
+    - time2.*.com
+    - time3.*.com
+    - time4.*.com
+    - time5.*.com
+    - time6.*.com
+    - time7.*.com
     - ntp.*.com
-    - time.*.com
-    - +.market.xiaomi.com
-    - '*.msftncsi.com'
-    - www.msftconnecttest.com
+    - ntp1.*.com
+    - ntp2.*.com
+    - ntp3.*.com
+    - ntp4.*.com
+    - ntp5.*.com
+    - ntp6.*.com
+    - ntp7.*.com
+    - '*.time.edu.cn'
+    - '*.ntp.org.cn'
+    - +.pool.ntp.org
+    - time1.cloud.tencent.com
+    - music.163.com
+    - '*.music.163.com'
+    - '*.126.net'
+    - musicapi.taihe.com
+    - music.taihe.com
+    - songsearch.kugou.com
+    - trackercdn.kugou.com
+    - '*.kuwo.cn'
+    - api-jooxtt.sanook.com
+    - api.joox.com
+    - joox.com
+    - y.qq.com
+    - '*.y.qq.com'
+    - streamoc.music.tc.qq.com
+    - mobileoc.music.tc.qq.com
+    - isure.stream.qqmusic.qq.com
+    - dl.stream.qqmusic.qq.com
+    - aqqmusic.tc.qq.com
+    - amobile.music.tc.qq.com
+    - '*.xiami.com'
+    - '*.music.migu.cn'
+    - music.migu.cn
+    - +.msftconnecttest.com
+    - +.msftncsi.com
     - localhost.ptlogin2.qq.com
+    - localhost.sec.qq.com
+    - 'localhost.*.weixin.qq.com'
+    - +.steamcontent.com
+    - +.srv.nintendo.net
+    - '*.n.n.srv.nintendo.net'
+    - +.cdn.nintendo.net
+    - +.stun.playstation.net
+    - xbox.*.*.microsoft.com
+    - '*.*.xboxlive.com'
+    - xbox.*.microsoft.com
+    - xnotify.xboxlive.com
+    - +.battle.net
+    - +.battlenet.com.cn
+    - +.wotgame.cn
+    - +.wggames.cn
+    - +.wowsgame.cn
+    - +.wargaming.net
+    - proxy.golang.org
+    - 'stun.*.*'
+    - 'stun.*.*.*'
+    - '+.stun.*.*'
+    - '+.stun.*.*.*'
+    - '+.stun.*.*.*.*'
+    - '+.stun.*.*.*.*.*'
+    - heartbeat.belkin.com
+    - '*.linksys.com'
+    - '*.linksyssmartwifi.com'
+    - '*.router.asus.com'
+    - mesu.apple.com
+    - swscan.apple.com
+    - swquery.apple.com
+    - swdownload.apple.com
+    - swcdn.apple.com
+    - swdist.apple.com
+    - lens.l.google.com
+    - stun.l.google.com
+    - na.b.g-tun.com
+    - +.nflxvideo.net
+    - '*.square-enix.com'
+    - '*.finalfantasyxiv.com'
+    - '*.ffxiv.com'
+    - '*.ff14.sdo.com'
+    - ff.dorado.sdo.com
+    - '*.mcdn.bilivideo.cn'
+    - +.media.dssott.com
+    - shark007.net
+    - +.market.xiaomi.com
+    - +.cmbchina.com
+    - +.cmbimg.com
+    - adguardteam.github.io
+    - adrules.top
+    - anti-ad.net
+    - local.adguard.org
+    - static.adtidy.org
+    - +.sandai.net
+    - +.n0808.com
+    - +.3gppnetwork.org
+    - +.uu.163.com
+    - ps.res.netease.com
+    - +.oray.com
+    - +.orayimg.com
+    - +.gcloudcs.com
+    - +.gcloudsdk.com
     - +.wilds.monsterhunter.com
     - +.capcom.com
     - +.playfabapi.com
     - +.playfab.com
     - +.akamai.net
     - +.cloudapp.azure.com
-    - +.steamcontent.com
-    - +.steampowered.com
   nameserver:
     - 223.5.5.5
     - https://dns.alidns.com/dns-query
@@ -59,8 +164,8 @@ dns:
     - 114.114.114.114
     - https://doh.360.cn/dns-query
   nameserver-policy:
-    "+.cloudapp.azure.com": [1.1.1.1, 8.8.8.8]
-    "+.monsterhunter.com": [1.1.1.1, 8.8.8.8]
+    "+.cloudapp.azure.com": [1.1.1.1]
+    "+.monsterhunter.com": [1.1.1.1]
     "+.capcom.com": [1.1.1.1]
   fallback:
     - 8.8.8.8
@@ -214,14 +319,14 @@ proxy-groups:
 
   - name: ♻️ 自动选择
     type: url-test
-    url: https://www.gstatic.com/generate_204
+    url: http://cp.cloudflare.com/
     interval: 300
     tolerance: 50
     proxies: []
 
   - name: 🔯 故障转移
     type: fallback
-    url: https://www.gstatic.com/generate_204
+    url: http://cp.cloudflare.com/
     interval: 300
     tolerance: 50
     proxies: []
@@ -229,7 +334,7 @@ proxy-groups:
   - name: 🔮 负载均衡
     type: load-balance
     strategy: consistent-hashing
-    url: https://www.gstatic.com/generate_204
+    url: http://cp.cloudflare.com/
     interval: 300
     tolerance: 50
     proxies: []
