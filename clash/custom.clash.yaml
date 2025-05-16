@@ -23,13 +23,13 @@ dns:
   enable: true
   listen: 0.0.0.0:53
   ipv6: false
-default-nameserver:
-  - 223.5.5.5
-  - 119.29.29.29
-  - 114.114.114.114
-direct-nameserver:
-  - 223.5.5.5
-  - 119.29.29.29
+  default-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
+    - 114.114.114.114
+  direct-nameserver:
+    - 223.5.5.5
+    - 119.29.29.29
   enhanced-mode: fake-ip
   fake-ip-range: 198.18.0.1/16
   fake-ip-filter-mode: blacklist
@@ -167,16 +167,15 @@ direct-nameserver:
     - "*.jd.com"
     - "*.taobao.com"
   nameserver:
-  - 223.5.5.5
-  - https://dns.alidns.com/dns-query
-  - 119.29.29.2
-  - tls://dot.pub
-  - 114.114.114.114
+    - 223.5.5.5
+    - https://dns.alidns.com/dns-query
+    - 119.29.29.2
+    - tls://dot.pub
+    - 114.114.114.114
   nameserver-policy:
     "+.cloudapp.azure.com": [1.1.1.1]
     "+.monsterhunter.com": [1.1.1.1]
     "+.capcom.com": [1.1.1.1]
-  fallback:
   fallback:
     - tls://dns.rubyfish.cn:853
     - https://dns.google/dns-query
