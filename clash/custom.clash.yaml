@@ -230,6 +230,13 @@ proxy-groups:
     type: select
     proxies: []
 
+  - name: 🎮 steam
+    type: select
+    proxies:
+      - 🚀 默认代理
+      - ♻️ 自动选择
+      - DIRECT
+
   - name: 📹 YouTube
     type: select
     proxies:
@@ -357,6 +364,7 @@ proxy-groups:
     proxies: []
      
 rules:
+  - GEOSITE,category-ads-all,REJECT
   - DOMAIN-SUFFIX,bilibili.com, 📺 Bilibili
   - GEOSITE,bilibili, 📺 Bilibili
   - GEOSITE,biliintl, 📺 Bilibili
@@ -372,9 +380,9 @@ rules:
   - PROCESS-NAME,CrashReport.exe,🎮 怪物猎人荒野
   - PROCESS-NAME,InstallerMessage.exe,🎮 怪物猎人荒野
   - PROCESS-NAME,MonsterHunterWilds.exe,🎮 怪物猎人荒野
+  - GEOSITE,steam,🎮 steam
   - GEOSITE,apple,🍎 Apple
   - GEOSITE,private,🎯 直连
-  - GEOSITE,CN,🎯 直连
   - GEOSITE,openai,🤖 ChatGPT
   - GEOSITE,google-gemini,🤖 ChatGPT
   - GEOSITE,github,👨🏿‍💻 GitHub
@@ -394,6 +402,7 @@ rules:
   - DOMAIN-SUFFIX,api.ipify.org,🚀 默认代理
   - DOMAIN-SUFFIX,gsas.apple.com,🚀 默认代理
   - DOMAIN-SUFFIX,hotmail.com,🚀 默认代理
+  - GEOSITE,CN,🎯 直连
 
   - GEOIP,private,🎯 直连,no-resolve
   - IP-CIDR,1.0.0.1/32,🚀 默认代理,no-resolve
