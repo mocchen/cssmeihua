@@ -1,3 +1,4 @@
+
 #!/usr/bin/env bash
 
 # 颜色配置
@@ -83,11 +84,6 @@ optimize_system() {
     fs_file_max=$((memory_mb * 256))
     fs_file_max=$((fs_file_max > 4194304 ? 4194304 : fs_file_max))
 
-    conntrack_max=$((memory_mb * 32))
-    conntrack_max=$((conntrack_max > 4194304 ? 4194304 : conntrack_max))  # 10Gbps 调整上限
-
-    buckets=$((conntrack_max / 8))
-
     rmem_max=$((memory_mb * 1024 * 8))  # 提高缓冲区
     rmem_max=$((rmem_max > 67108864 ? 67108864 : rmem_max))  # 10Gbps 调整上限
 
@@ -118,6 +114,7 @@ optimize_system() {
     # 配置 sysctl
     cat > /etc/sysctl.conf << EOF
 fs.file-max = $fs_file_max
+net.ipv4.ip_no_pmtu_disc = 1
 
 # 增强网络缓冲区
 net.core.rmem_default = $rmem_default
@@ -163,22 +160,25 @@ net.ipv4.tcp_adv_win_scale = 2
 net.ipv4.tcp_notsent_lowat = 16384
 
 # UDP优化
-net.ipv4.udp_gro = 1  
 net.ipv4.udp_mem = 4096 87380 4194304
 net.ipv4.udp_rmem_min = 16384
 net.ipv4.udp_wmem_min = 16384
 
+# 限制 ICMP
+net.ipv4.icmp_ratelimit = 100
+net.ipv4.icmp_ratemask = 88089
+
 # NAT 连接追踪优化
-net.netfilter.nf_conntrack_max = $conntrack_max
-net.netfilter.nf_conntrack_buckets = $buckets
+net.netfilter.nf_conntrack_max = 65536
+net.netfilter.nf_conntrack_buckets = 8192
 net.netfilter.nf_conntrack_tcp_timeout_established = 600
 net.netfilter.nf_conntrack_tcp_timeout_time_wait = 120
 net.netfilter.nf_conntrack_tcp_timeout_close_wait = 60
 net.netfilter.nf_conntrack_tcp_timeout_fin_wait = 60
 net.netfilter.nf_conntrack_tcp_timeout_syn_recv = 30
 net.netfilter.nf_conntrack_tcp_be_liberal = 1
-net.netfilter.nf_conntrack_udp_timeout = 60
-net.netfilter.nf_conntrack_udp_timeout_stream = 180
+net.netfilter.nf_conntrack_udp_timeout = 30
+net.netfilter.nf_conntrack_udp_timeout_stream = 120
 
 # 默认使用 fq 调度器
 net.core.default_qdisc = fq
