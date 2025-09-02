@@ -21,33 +21,48 @@ experimental:
   ignore-resolve-fail: true
 dns:
   enable: true
-  listen: 0.0.0.0:53
+  listen: 1053
   ipv6: false
   default-nameserver:
-    - 223.5.5.5
-    - 119.29.29.29
-    - 114.114.114.114
-  direct-nameserver:
-    - 223.5.5.5
-    - 119.29.29.29
+  - 1.1.1.1
+  - 8.8.8.8
+  nameserver:
+  - https://1.1.1.1/dns-query
+  - https://dns.google/dns-query
+  - 1.1.1.1
+  - 8.8.8.8
   proxy-server-nameserver:
+  - https://doh.pub/dns-query
+  - 223.5.5.5
+  nameserver-policy:
+    geosite:cn,private:
+    - https://223.5.5.5/dns-query
     - https://doh.pub/dns-query
     - 223.5.5.5
-  nameserver:
+    - 119.29.29.29
+    geo:cn:
+    - https://223.5.5.5/dns-query
+    - https://doh.pub/dns-query
     - 223.5.5.5
-    - https://dns.alidns.com/dns-query
-    - 119.29.29.2
-    - tls://dot.pub
-    - 114.114.114.114
-  nameserver-policy:
-    "+.cloudapp.azure.com": [1.1.1.1]
-    "+.monsterhunter.com": [1.1.1.1]
-    "+.capcom.com": [1.1.1.1]
-  fallback:
-    - tls://1.1.1.1
-    - tls://dns.rubyfish.cn:853
+    - 119.29.29.29
+    geosite:gfw:
+    - https://1.1.1.1/dns-query
     - https://dns.google/dns-query
-    - tls://1.0.0.1:853
+    - 1.1.1.1
+    - 8.8.8.8
+    geosite:geolocation-!cn:
+    - https://1.1.1.1/dns-query
+    - https://dns.google/dns-query
+    - 1.1.1.1
+    - 8.8.8.8
+    full-nameserver:
+    - https://1.1.1.1/dns-query
+    - https://dns.google/dns-query
+    - 1.1.1.1
+    - 8.8.8.8
+  fallback:
+  - tls://8.8.4.4
+  - tls://1.1.1.1
   fallback-filter:
     geoip: true
     geoip-code: CN
@@ -412,3 +427,4 @@ rules:
   - GEOIP,telegram,📲 Telegram
   - GEOIP,CN,🎯 直连
   - MATCH,🐟 漏网之鱼
+
