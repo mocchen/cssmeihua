@@ -24,45 +24,45 @@ dns:
   listen: 1053
   ipv6: false
   default-nameserver:
-  - 1.1.1.1
-  - 8.8.8.8
+    - 1.1.1.1
+    - 8.8.8.8
   nameserver:
-  - https://1.1.1.1/dns-query
-  - https://dns.google/dns-query
-  - 1.1.1.1
-  - 8.8.8.8
+    - https://1.1.1.1/dns-query    # Cloudflare（支持 H3）
+    - https://dns.google/dns-query # Google（支持 H3）
+    - 1.1.1.1                      # Cloudflare Public DNS (UDP)
+    - 8.8.8.8                      # Google Public DNS (UDP)
   proxy-server-nameserver:
-  - https://doh.pub/dns-query
-  - 223.5.5.5
+    - https://doh.pub/dns-query
+    - 223.5.5.5
   nameserver-policy:
-    geosite:cn,private:
-    - https://223.5.5.5/dns-query
-    - https://doh.pub/dns-query
-    - 223.5.5.5
-    - 119.29.29.29
-    geo:cn:
-    - https://223.5.5.5/dns-query
-    - https://doh.pub/dns-query
-    - 223.5.5.5
-    - 119.29.29.29
-    geosite:gfw:
-    - https://1.1.1.1/dns-query
-    - https://dns.google/dns-query
-    - 1.1.1.1
-    - 8.8.8.8
-    geosite:geolocation-!cn:
-    - https://1.1.1.1/dns-query
-    - https://dns.google/dns-query
-    - 1.1.1.1
-    - 8.8.8.8
-    full-nameserver:
-    - https://1.1.1.1/dns-query
-    - https://dns.google/dns-query
-    - 1.1.1.1
-    - 8.8.8.8
+    "geosite:cn,private": # 国内域名和私有域名强制走国内 DNS
+      - https://223.5.5.5/dns-query # 阿里
+      - https://doh.pub/dns-query   # 腾讯
+      - 223.5.5.5                   # 阿里 UDP
+      - 119.29.29.29                # 腾讯 UDP
+    "geo:cn":                       # 也可以用 geo:cn 匹配 IP
+      - https://223.5.5.5/dns-query
+      - https://doh.pub/dns-query
+      - 223.5.5.5                   # 阿里 UDP
+      - 119.29.29.29                # 腾讯 UDP
+    "geosite:gfw":                  # 新增：GFW 列表域名强制走国外 DNS
+      - https://1.1.1.1/dns-query
+      - https://dns.google/dns-query
+      - 1.1.1.1
+      - 8.8.8.8
+    "geosite:geolocation-!cn":      # 新增：非中国大陆域名强制走国外 DNS
+      - https://1.1.1.1/dns-query
+      - https://dns.google/dns-query
+      - 1.1.1.1
+      - 8.8.8.8
+    "full-nameserver":              # 新增：最终兜底，所有未匹配的域名查询强制走国外 DNS
+      - https://1.1.1.1/dns-query
+      - https://dns.google/dns-query
+      - 1.1.1.1
+      - 8.8.8.8
   fallback:
-  - tls://8.8.4.4
-  - tls://1.1.1.1
+    - tls://8.8.4.4
+    - tls://1.1.1.1
   fallback-filter:
     geoip: true
     geoip-code: CN
@@ -223,12 +223,14 @@ tun:
   auto-route: true
   auto-detect-interface: true
   endpoint-independent-nat: true
+  gso: true
+  gso-max-size: 65536
   dns-hijack:
     - any:53
     - tcp://any:53
-  strict-route: true
+  strict-route: false
   mtu: 1380
-  udp-timeout: 180
+  udp-timeout: 120
 proxies: []
 
 proxy-groups:
@@ -239,7 +241,7 @@ proxy-groups:
       - 🔯 故障转移
       - 🔮 负载均衡
 
-  - name: 🎮 怪物猎人荒野
+  - name: 🎮 游戏
     type: select
     proxies: []
 
@@ -288,16 +290,16 @@ proxy-groups:
   - name: 🐬 OneDrive
     type: select
     proxies:
+      - DIRECT
       - 🚀 默认代理
       - ♻️ 自动选择
-      - DIRECT
 
   - name: 🪟 Microsoft
     type: select
     proxies:
+      - DIRECT
       - 🚀 默认代理
       - ♻️ 自动选择
-      - DIRECT
 
   - name: 🎵 TikTok
     type: select
@@ -381,18 +383,44 @@ rules:
   - DOMAIN-SUFFIX,bilibili.com, 📺 Bilibili
   - GEOSITE,bilibili, 📺 Bilibili
   - GEOSITE,biliintl, 📺 Bilibili
-  - DOMAIN-SUFFIX,yanami.me,🚀 默认代理
-  - DOMAIN-SUFFIX,xjj.at,🚀 默认代理
+  - DOMAIN-SUFFIX,ping.pe,🚀 默认代理
   - DOMAIN-SUFFIX,mochen.one,🚀 默认代理
-  - DOMAIN-SUFFIX,wilds.monsterhunter.com,🎮 怪物猎人荒野
-  - DOMAIN-SUFFIX,capcom.com,🎮 怪物猎人荒野
-  - DOMAIN-SUFFIX,playfabapi.com,🎮 怪物猎人荒野
-  - DOMAIN-SUFFIX,playfab.com,🎮 怪物猎人荒野
-  - DOMAIN-SUFFIX,akamai.net,🎮 怪物猎人荒野
-  - DOMAIN-SUFFIX,cloudapp.azure.com,🎮 怪物猎人荒野
-  - PROCESS-NAME,CrashReport.exe,🎮 怪物猎人荒野
-  - PROCESS-NAME,InstallerMessage.exe,🎮 怪物猎人荒野
-  - PROCESS-NAME,MonsterHunterWilds.exe,🎮 怪物猎人荒野
+  - DOMAIN-SUFFIX,dgameglobal.com,🎮 游戏
+  - DOMAIN-SUFFIX,wilds.monsterhunter.com,🎮 游戏
+  - DOMAIN-SUFFIX,capcom.com,🎮 游戏
+  - DOMAIN-SUFFIX,playfabapi.com,🎮 游戏
+  - DOMAIN-SUFFIX,playfab.com,🎮 游戏
+  - DOMAIN-SUFFIX,akamai.net,🎮 游戏
+  - DOMAIN-SUFFIX,cloudapp.azure.com,🎮 游戏
+  - PROCESS-NAME,CrashReport.exe,🎮 游戏
+  - PROCESS-NAME,InstallerMessage.exe,🎮 游戏
+  - PROCESS-NAME,MonsterHunterWilds.exe,🎮 游戏
+  - PROCESS-NAME,SGuard64.exe,🎮 游戏
+  - PROCESS-NAME,SGuardSvc64.exe,🎮 游戏
+  - PROCESS-NAME,SGuardUpdate64.exe,🎮 游戏
+  - PROCESS-NAME,Uninstall64.exe,🎮 游戏
+  - PROCESS-NAME,ACE-Service64.exe,🎮 游戏
+  - PROCESS-NAME,ACE-Setup64.exe,🎮 游戏
+  - PROCESS-NAME,GeckoParser.exe,🎮 游戏
+  - PROCESS-NAME,MetaperfCapturer.exe,🎮 游戏
+  - PROCESS-NAME,profiler-symbol-server.exe,🎮 游戏
+  - PROCESS-NAME,DownSysSymCache.exe,🎮 游戏
+  - PROCESS-NAME,dumpbin.exe,🎮 游戏
+  - PROCESS-NAME,Link.exe,🎮 游戏
+  - PROCESS-NAME,SymCacheGen.exe,🎮 游戏
+  - PROCESS-NAME,SymChk.exe,🎮 游戏
+  - PROCESS-NAME,WevtUtil.exe,🎮 游戏
+  - PROCESS-NAME,XPerf.exe,🎮 游戏
+  - PROCESS-NAME,DeltaForceClient-Win64-Shipping.exe,🎮 游戏
+  - PROCESS-NAME,INTLWebViewHelper.exe,🎮 游戏
+  - PROCESS-NAME,pfbs.exe,🎮 游戏
+  - PROCESS-NAME,UnrealCEFSubProcess.exe,🎮 游戏
+  - PROCESS-NAME,UE4PrereqSetup_x64.exe,🎮 游戏
+  - PROCESS-NAME,DeltaForceClient.exe,🎮 游戏
+  - PROCESS-NAME,EAAntiCheat.Installer.exe,🎮 游戏
+  - PROCESS-NAME,bf6event.exe,🎮 游戏
+  - PROCESS-NAME,EAAntiCheat.GameServiceLauncher.exe,🎮 游戏
+  - GEOSITE,steam@cn,🎯 直连
   - GEOSITE,steam,🎮 steam
   - GEOSITE,apple,🍎 Apple
   - GEOSITE,private,🎯 直连
@@ -426,5 +454,9 @@ rules:
   - GEOIP,netflix,🎥 NETFLIX
   - GEOIP,telegram,📲 Telegram
   - GEOIP,CN,🎯 直连
+  - IP-CIDR,10.0.0.0/8,DIRECT
+  - IP-CIDR,172.16.0.0/12,DIRECT
+  - IP-CIDR,192.168.0.0/16,DIRECT
+  - IP-CIDR,100.64.0.0/10,DIRECT
+  - IP-CIDR,127.0.0.0/8,DIRECT
   - MATCH,🐟 漏网之鱼
-
