@@ -229,7 +229,7 @@ tun:
     - any:53
     - tcp://any:53
   strict-route: false
-  mtu: 1380
+  mtu: 1500
   udp-timeout: 120
 proxies: []
 
@@ -257,14 +257,12 @@ proxy-groups:
     proxies:
       - 🚀 默认代理
       - ♻️ 自动选择
-      - DIRECT
 
   - name: 🍀 Google
     type: select
     proxies:
       - 🚀 默认代理
       - ♻️ 自动选择
-      - DIRECT
 
   - name: 📺 Bilibili
     type: select
@@ -278,14 +276,12 @@ proxy-groups:
     proxies:
       - 🚀 默认代理
       - ♻️ 自动选择
-      - DIRECT
 
   - name: 👨🏿‍💻 GitHub
     type: select
     proxies:
       - 🚀 默认代理
       - ♻️ 自动选择
-      - DIRECT
 
   - name: 🐬 OneDrive
     type: select
@@ -306,21 +302,18 @@ proxy-groups:
     proxies:
       - 🚀 默认代理
       - ♻️ 自动选择
-      - DIRECT
 
   - name: 📲 Telegram
     type: select
     proxies:
       - 🚀 默认代理
       - ♻️ 自动选择
-      - DIRECT
 
   - name: 🎥 NETFLIX
     type: select
     proxies:
       - 🚀 默认代理
       - ♻️ 自动选择
-      - DIRECT
 
   - name: ✈️ Speedtest
     type: select
@@ -334,14 +327,13 @@ proxy-groups:
     proxies:
       - 🚀 默认代理
       - ♻️ 自动选择
-      - DIRECT
 
   - name: 🍎 Apple
     type: select
     proxies:
+      - DIRECT
       - 🚀 默认代理
       - ♻️ 自动选择
-      - DIRECT
 
   - name: 🐟 漏网之鱼
     type: select
@@ -361,6 +353,8 @@ proxy-groups:
     url: http://cp.cloudflare.com/
     interval: 300
     tolerance: 50
+    timeout: 300
+    max-failed-times: 3
     proxies: []
 
   - name: 🔯 故障转移
@@ -368,6 +362,8 @@ proxy-groups:
     url: http://cp.cloudflare.com/
     interval: 300
     tolerance: 50
+    timeout: 300
+    max-failed-times: 3
     proxies: []
 
   - name: 🔮 负载均衡
@@ -376,6 +372,8 @@ proxy-groups:
     url: http://cp.cloudflare.com/
     interval: 300
     tolerance: 50
+    timeout: 300
+    max-failed-times: 3
     proxies: []
      
 rules:
@@ -383,7 +381,6 @@ rules:
   - DOMAIN-SUFFIX,bilibili.com, 📺 Bilibili
   - GEOSITE,bilibili, 📺 Bilibili
   - GEOSITE,biliintl, 📺 Bilibili
-  - DOMAIN-SUFFIX,ping.pe,🚀 默认代理
   - DOMAIN-SUFFIX,mochen.one,🚀 默认代理
   - DOMAIN-SUFFIX,dgameglobal.com,🎮 游戏
   - DOMAIN-SUFFIX,wilds.monsterhunter.com,🎮 游戏
