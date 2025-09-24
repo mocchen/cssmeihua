@@ -24,6 +24,16 @@ if [ "$(id -u)" != "0" ]; then
     exit 1
 fi
 
+if ! command -v openssl &>/dev/null; then
+    echo -e "${YELLOW}未检测到 openssl，正在安装 openssl...${NC}"
+    apt update
+    apt install -y openssl
+    if [ $? -ne 0 ]; then
+        echo -e "${RED}安装 openssl 失败，请手动安装后重新运行脚本。${NC}"
+        exit 1
+    fi
+fi
+
 # 显示用法信息
 usage() {
     echo "用法: $0 <目标> [选项]"
