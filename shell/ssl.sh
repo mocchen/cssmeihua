@@ -106,7 +106,6 @@ usage() {
     echo "  $0 example.com -f ports.txt --check-cert"
 }
 
-# 测试单个目标的端口
 test_target_port() {
     local target=$1
     local port=$2
@@ -118,83 +117,58 @@ test_target_port() {
     local output=""
     local success=false
 
-    # 捕获 stdout + stderr（这样能拿到 CONNECTED、Protocol、Cipher 等信息）
+    # 尝试 TLS 连接获取证书、TLS 版本和 Cipher
     if result=$(timeout "$timeout_val" openssl s_client -connect "$target:$port" -servername "$target" < /dev/null 2>&1); then
         if echo "$result" | grep -q "CONNECTED"; then
-            output="[+] $target:$port - SSL/TLS 连接成功"
             success=true
+            output="[+] $target:$port - SSL/TLS 连接成功"
 
-            # 获取证书信息与TLS版本/加密套件（当启用 --check-cert 时）
-            local cert_info=""
             if [ "$check_cert" = true ]; then
                 local x509info=""
-                local cert_pem=""
-
-                # 从第一次连接输出里提取证书 PEM
-                cert_pem=$(printf "%s\n" "$result" | sed -n '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p')
-                if [ -n "$cert_pem" ]; then
-                    x509info=$(printf "%s\n" "$cert_pem" | openssl x509 -noout -subject -dates -issuer 2>/dev/null)
+                if cert_pem=$(echo "$result" | sed -n '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p'); then
+                    if [ -n "$cert_pem" ]; then
+                        x509info=$(printf "%s\n" "$cert_pem" | openssl x509 -noout -subject -dates -issuer 2>/dev/null)
+                    fi
                 fi
-
-                # 如果没提取到，再尝试一次（仍保留 stderr 以便拿协议/套件信息）
                 if [ -z "$x509info" ]; then
-                    x509info=$(timeout "$timeout_val" openssl s_client -connect "$target:$port" -servername "$target" < /dev/null 2>&1 | \
-                               sed -n '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/p' | \
-                               openssl x509 -noout -subject -dates -issuer 2>/dev/null)
+                    x509info=$(timeout "$timeout_val" openssl s_client -connect "$target:$port" -servername "$target" 2>/dev/null | openssl x509 -noout -subject -dates -issuer 2>/dev/null)
                 fi
 
-                # 提取 TLS 协议版本
-                local tls_version=""
+                local tls_version cipher
                 tls_version=$(echo "$result" | awk -F',' '/New, TLS/ {gsub(/^[ \t]+|[ \t]+$/,"",$2); print $2; exit}')
-                
-                # 提取 Cipher（兼容 "Cipher    : <name>" 与 "Cipher is <name>" 两种常见输出）
-                local cipher=""
-                cipher=$(printf "%s\n" "$result" | awk -F': ' '/^\s*Cipher[[:space:]]*:/ {gsub(/^[ \t]+|[ \t]+$/,"",$2); print $2; exit}')
-                if [ -z "$cipher" ]; then
-                    cipher=$(printf "%s\n" "$result" | awk '/Cipher is/ {print $NF; exit}')
-                fi
+                cipher=$(echo "$result" | awk -F',' '/New, TLS/ {gsub(/^[ \t]+|[ \t]+$/,"",$3); sub("Cipher is ","",$3); print $3; exit}')
 
-                # 组合证书信息输出
                 if [ -n "$x509info" ]; then
-                    cert_info=$(printf "%s\n" "$x509info" | sed 's/^/    /')
+                    output="$output\n$(printf "%s\n" "$x509info" | sed 's/^/    /')"
                 else
-                    cert_info="    未能获取证书信息（可能不是证书或解析失败）"
+                    output="$output\n    未能获取证书信息"
                 fi
-
-                if [ -n "$tls_version" ]; then
-                    cert_info="$cert_info\n    TLS 协议版本: $tls_version"
-                else
-                    cert_info="$cert_info\n    TLS 协议版本: 未检测到"
-                fi
-
-                if [ -n "$cipher" ]; then
-                    cert_info="$cert_info\n    加密套件: $cipher"
-                else
-                    cert_info="$cert_info\n    加密套件: 未检测到"
-                fi
+                output="$output\n    TLS 协议版本: ${tls_version:-未检测到}\n    Cipher: ${cipher:-未检测到}"
             fi
+        fi
+    fi
 
-            # 组合输出信息（注意：已不测试套件列表）
-            if [ -n "$cert_info" ]; then
-                output="$output\n$cert_info"
-            fi
+    # HTTP 请求检测（只在 port 是 HTTP 或任意需要检测 HTTP 的端口时使用）
+    if response=$(timeout "$timeout_val" curl -Is http://$target:$port 2>/dev/null | head -n 1); then
+        if [[ "$response" =~ ^HTTP ]]; then
+            success=true
+            output="$output\n[+] $target:$port - HTTP 服务，响应: $response"
         fi
     fi
 
     # 输出结果
     if [ "$success" = true ]; then
         echo -e "${GREEN}线程${thread_id}: $output${NC}"
-        echo "$target:$port" >> "$open_ports_file"
+        [ "$check_cert" = true ] && echo "$target:$port" >> "$open_ports_file"
     else
         if [ "$show_closed" = true ] || [ "$verbose" = true ]; then
-            echo -e "${RED}线程${thread_id}: $target:$port - SSL/TLS 连接失败${NC}"
+            echo -e "${RED}线程${thread_id}: $target:$port - 无响应${NC}"
         fi
     fi
 
-    # 记录到结果文件
+    # 记录到结果文件（追加）
     echo "$target:$port: $([ "$success" = true ] && echo "成功" || echo "失败")" >> "$result_file"
 
-    # 返回值：成功返回0，失败返回1
     return $([ "$success" = true ] && echo 0 || echo 1)
 }
 
