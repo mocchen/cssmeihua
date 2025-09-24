@@ -198,15 +198,6 @@ parallel_scan() {
             # 执行扫描
             test_target_port "$target" "$port" "$timeout_val" "$check_cert" "$test_ciphers" "$thread_id"
             
-            # 更新进度
-            ((completed_tasks++))
-            local progress=$((completed_tasks * 100 / total_tasks))
-            
-            # 显示进度
-            if [ $((completed_tasks % 10)) -eq 0 ] || [ $completed_tasks -eq $total_tasks ]; then
-                echo -e "${YELLOW}[进度] $completed_tasks/$total_tasks ($progress%)${NC}"
-            fi
-            
             # 速率限制
             if [ "$rate_limit" -gt 0 ]; then
                 sleep $(echo "scale=3; $rate_limit/1000" | bc)
