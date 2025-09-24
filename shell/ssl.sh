@@ -20,7 +20,7 @@ fi
 
 # 检查依赖
 check_dependencies() {
-    local deps=("openssl" "timeout" "bc")
+    local deps=("openssl" "timeout" "bc" "curl")
     local missing_deps=()
     for dep in "${deps[@]}"; do
         if ! command -v "$dep" &>/dev/null; then
