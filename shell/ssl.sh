@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # OpenSSL批量端口扫描脚本（多线程版）- 单个目标版本
-# 用法: .ssl.sh <目标> [选项]
+# 用法: ./ssl_port_scanner.sh <目标> [选项]
 
 # 颜色定义
 RED='\033[0;31m'
@@ -33,7 +33,7 @@ usage() {
     echo "示例:"
     echo "  $0 example.com -p 443"
     echo "  $0 192.168.1.1 -p 80,443,8443 -j 24"
-    echo "  $0 192.168.1.1 -p 52000-52400 -j 24 --check-cert --output result.txt"
+    echo "  $0 183.2.133.238 -p 52000-52400 -j 24 --check-cert --output result.txt"
 }
 
 # IP验证函数
@@ -157,7 +157,8 @@ test_ssl_port() {
     # 输出结果
     if [ "$success" = true ]; then
         echo -e "${GREEN}线程${thread_id}: $output${NC}"
-        echo "${target}:${port}" >> "$open_ports_file"
+        # 使用锁机制安全写入文件
+        (flock -x 200; echo "${target}:${port}" >> "$open_ports_file") 200>"$lock_file"
         return 0
     else
         if [ "$show_closed" = true ]; then
@@ -186,6 +187,10 @@ parallel_scan() {
     echo -e "${CYAN}[*] 目标: $target${NC}"
     echo -e "${CYAN}[*] 端口数量: $total_ports${NC}"
     echo -e "${CYAN}[*] 线程数: $max_jobs${NC}"
+    
+    # 创建锁文件
+    lock_file="/tmp/ssl_scan_lock_$(date +%s).lock"
+    touch "$lock_file"
     
     # 创建命名管道用于控制并发
     local fifo=$(mktemp -u)
@@ -230,7 +235,16 @@ parallel_scan() {
     wait
     exec 3>&-
     
-    echo -e "${GREEN}[√] 扫描完成! 发现 $open_ports 个开放端口${NC}"
+    # 从文件中读取实际的开放端口数量
+    local actual_open_ports=0
+    if [ -f "$open_ports_file" ]; then
+        actual_open_ports=$(wc -l < "$open_ports_file" | tr -d ' ')
+    fi
+    
+    echo -e "${GREEN}[√] 扫描完成! 发现 $actual_open_ports 个开放端口${NC}"
+    
+    # 清理锁文件
+    rm -f "$lock_file"
 }
 
 # 显示摘要信息
@@ -253,9 +267,10 @@ show_summary() {
         
         if [ "$open_count" -gt 0 ]; then
             echo -e "${GREEN}开放的SSL端口:${NC}"
-            while IFS= read -r service; do
+            # 对端口进行排序显示
+            sort -t: -k2 -n "$open_ports_file" | while IFS= read -r service; do
                 echo -e "  ${GREEN}✓${NC} $service"
-            done < "$open_ports_file"
+            done
             
             # 保存结果到文件
             if [ -n "$output_file" ]; then
@@ -268,7 +283,7 @@ show_summary() {
                     echo "发现的SSL服务: $open_count"
                     echo ""
                     echo "开放端口:"
-                    cat "$open_ports_file"
+                    sort -t: -k2 -n "$open_ports_file"
                 } > "$output_file"
                 echo -e "${CYAN}[+] 结果已保存到: $output_file${NC}"
             fi
@@ -416,6 +431,9 @@ main() {
 cleanup() {
     if [ -n "$open_ports_file" ] && [ -f "$open_ports_file" ]; then
         rm -f "$open_ports_file"
+    fi
+    if [ -n "$lock_file" ] && [ -f "$lock_file" ]; then
+        rm -f "$lock_file"
     fi
 }
 
