@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # OpenSSL批量端口扫描脚本（多线程版）- 支持IP范围扫描
-# 用法: bash ssl.sh <目标> [选项]
+# 用法: ./ssl_port_scanner.sh <目标> [选项]
 
 # 颜色定义
 RED='\033[0;31m'
@@ -168,7 +168,7 @@ check_dependencies() {
     done
 }
 
-# 生成目标列表
+# 生成目标列表 - 修复版本
 generate_targets() {
     local target_spec=$1
     local ip_file=$2
@@ -186,7 +186,6 @@ generate_targets() {
     fi
     
     local targets=()
-    local original_count=0
     
     echo -e "${CYAN}[*] 开始解析目标...${NC}"
     
@@ -198,8 +197,6 @@ generate_targets() {
             if [ -z "$line" ]; then
                 continue
             fi
-            
-            ((original_count++))
             
             if is_valid_ip "$line"; then
                 targets+=("$line")
@@ -226,24 +223,24 @@ generate_targets() {
             fi
         done < "$ip_file"
     elif [ -n "$target_spec" ]; then
-        # 解析命令行指定的目标
-        original_count=1
+        # 直接解析命令行指定的目标
+        echo -e "${CYAN}[*] 解析目标: $target_spec${NC}"
         
         if is_valid_ip "$target_spec"; then
-            echo -e "${GREEN}[√] 识别为单个IP地址: $target_spec${NC}"
+            echo -e "${GREEN}[√] 识别为单个IP地址${NC}"
             targets=("$target_spec")
         elif is_valid_cidr "$target_spec"; then
-            echo -e "${YELLOW}[!] 识别为CIDR格式: $target_spec${NC}"
+            echo -e "${YELLOW}[!] 识别为CIDR格式${NC}"
             targets=($(cidr_to_ips "$target_spec"))
         elif is_valid_ip_range "$target_spec"; then
-            echo -e "${YELLOW}[!] 识别为IP范围格式: $target_spec${NC}"
+            echo -e "${YELLOW}[!] 识别为IP范围格式${NC}"
             targets=($(range_to_ips "$target_spec"))
         elif [ -f "$target_spec" ]; then
-            echo -e "${YELLOW}[!] 识别为文件路径: $target_spec${NC}"
+            echo -e "${YELLOW}[!] 识别为文件路径${NC}"
             # 递归处理文件
             targets=($(generate_targets "" "$target_spec" "$no_ping" "$debug"))
         else
-            echo -e "${BLUE}[?] 识别为域名或主机名: $target_spec${NC}"
+            echo -e "${BLUE}[?] 识别为域名或主机名${NC}"
             targets=("$target_spec")
         fi
     else
@@ -255,16 +252,15 @@ generate_targets() {
     local unique_targets=($(printf "%s\n" "${targets[@]}" | sort -u))
     local total_targets=${#unique_targets[@]}
     
-    echo -e "${CYAN}[*] 目标解析完成${NC}"
-    echo -e "  ${BLUE}原始输入: $original_count 个${NC}"
-    echo -e "  ${BLUE}解析后目标: ${#targets[@]} 个${NC}"
-    echo -e "  ${GREEN}去重后目标: $total_targets 个${NC}"
+    echo -e "${GREEN}[√] 目标解析完成: 共 $total_targets 个目标${NC}"
     
-    if [ "$debug" = true ] && [ $total_targets -le 20 ]; then
-        echo -e "  ${GREEN}目标列表: ${unique_targets[*]}${NC}"
+    if [ "$debug" = true ] && [ $total_targets -le 10 ]; then
+        echo -e "${GREEN}[√] 目标列表: ${unique_targets[*]}${NC}"
+    elif [ "$debug" = true ]; then
+        echo -e "${GREEN}[√] 前10个目标: ${unique_targets[*]:0:10}...${NC}"
     fi
     
-    # 可选ping检测
+    # 可选ping检测（仅对多个目标生效）
     local final_targets=()
     local online_count=0
     
@@ -291,8 +287,17 @@ generate_targets() {
                 echo -e "  ${YELLOW}[ping进度] $counter/$total_targets ($progress%)${NC}"
             fi
         done
-        echo -e "${CYAN}[*] 在线主机: $online_count/$total_targets${NC}"
-        unique_targets=("${final_targets[@]}")
+        
+        if [ $total_targets -gt 1 ]; then
+            echo -e "${CYAN}[*] 在线主机: $online_count/$total_targets${NC}"
+        fi
+        
+        # 如果进行了ping检测，使用检测后的结果
+        if [ $online_count -gt 0 ]; then
+            unique_targets=("${final_targets[@]}")
+        elif [ $total_targets -gt 1 ]; then
+            echo -e "${RED}[!] 没有检测到在线主机，但仍将继续扫描${NC}"
+        fi
     else
         online_count=$total_targets
     fi
@@ -329,11 +334,16 @@ generate_ports() {
         if [ "$debug" = true ]; then
             echo -e "${RED}[DEBUG] 端口范围: $start-$end${NC}"
         fi
-        for port in $(seq "$start" "$end"); do
-            if [ "$port" -ge 1 ] && [ "$port" -le 65535 ]; then
+        
+        # 验证端口范围有效性
+        if [ "$start" -ge 1 ] && [ "$end" -le 65535 ] && [ "$start" -le "$end" ]; then
+            for port in $(seq "$start" "$end"); do
                 ports+=("$port")
-            fi
-        done
+            done
+        else
+            echo -e "${RED}错误: 无效的端口范围 $start-$end${NC}"
+            return 1
+        fi
     # 如果是逗号分隔的列表 (如: 80,443,8080)
     elif [[ "$port_spec" =~ ^[0-9]+(,[0-9]+)*$ ]]; then
         if [ "$debug" = true ]; then
@@ -349,17 +359,27 @@ generate_ports() {
         # 单个端口
         if [[ "$port_spec" =~ ^[0-9]+$ ]] && [ "$port_spec" -ge 1 ] && [ "$port_spec" -le 65535 ]; then
             ports=("$port_spec")
+        else
+            echo -e "${RED}错误: 无效的端口格式 '$port_spec'${NC}"
+            return 1
         fi
     fi
     
     # 去重和排序
     local unique_ports=($(printf "%s\n" "${ports[@]}" | sort -nu))
+    local total_ports=${#unique_ports[@]}
     
-    if [ "$debug" = true ]; then
-        echo -e "${RED}[DEBUG] 解析后端口数量: ${#unique_ports[@]}${NC}"
-        if [ ${#unique_ports[@]} -le 20 ]; then
-            echo -e "${RED}[DEBUG] 端口列表: ${unique_ports[*]}${NC}"
-        fi
+    if [ $total_ports -eq 0 ]; then
+        echo -e "${RED}错误: 未找到有效端口${NC}"
+        return 1
+    fi
+    
+    echo -e "${GREEN}[√] 端口解析完成: 共 $total_ports 个端口${NC}"
+    
+    if [ "$debug" = true ] && [ $total_ports -le 20 ]; then
+        echo -e "${GREEN}[√] 端口列表: ${unique_ports[*]}${NC}"
+    elif [ "$debug" = true ]; then
+        echo -e "${GREEN}[√] 前10个端口: ${unique_ports[*]:0:10}...${NC}"
     fi
     
     printf "%s\n" "${unique_ports[@]}"
@@ -391,15 +411,9 @@ test_target_port() {
                     openssl x509 -noout -subject -dates -issuer 2>/dev/null | sed 's/^/    /' 2>/dev/null)
             fi
             
-            # 测试加密套件
-            local cipher_info=""
-            if [ "$test_ciphers" = true ] && [ "$success" = true ]; then
-                cipher_info=$(test_cipher_suites "$target" "$port" "$timeout_val")
-            fi
-            
             # 组合输出信息
-            if [ -n "$cert_info" ] || [ -n "$cipher_info" ]; then
-                output="$output\n$cert_info$cipher_info"
+            if [ -n "$cert_info" ]; then
+                output="$output\n$cert_info"
             fi
         fi
     fi
@@ -410,51 +424,11 @@ test_target_port() {
         echo "$target:$port" >> "$open_ports_file"
     else
         if [ "$show_closed" = true ]; then
-            echo -e "${RED}线程${thread_id}: $target:$port - SSL/TLS 连接失败${NC}"
+            echo -e "${RED}线程${thread_id}: $target:$port - 连接失败${NC}"
         fi
     fi
     
     return $([ "$success" = true ] && echo 0 || echo 1)
-}
-
-# 测试支持的加密套件
-test_cipher_suites() {
-    local target=$1
-    local port=$2
-    local timeout_val=$3
-    
-    local output=""
-    local supported_ciphers=()
-    
-    # 常见的加密套件列表
-    local ciphers=(
-        "TLS_AES_256_GCM_SHA384"
-        "TLS_AES_128_GCM_SHA256"
-        "TLS_CHACHA20_POLY1305_SHA256"
-        "ECDHE-ECDSA-AES256-GCM-SHA384"
-        "ECDHE-RSA-AES256-GCM-SHA384"
-        "ECDHE-ECDSA-AES128-GCM-SHA256"
-        "ECDHE-RSA-AES128-GCM-SHA256"
-        "DHE-RSA-AES256-GCM-SHA384"
-        "DHE-RSA-AES128-GCM-SHA256"
-    )
-    
-    for cipher in "${ciphers[@]}"; do
-        if timeout "$timeout_val" openssl s_client -cipher "$cipher" -connect "$target:$port" -servername "$target" < /dev/null 2>&1 | grep -q "Cipher is"; then
-            supported_ciphers+=("$cipher")
-        fi
-    done
-    
-    if [ ${#supported_ciphers[@]} -gt 0 ]; then
-        output="\n    支持的加密套件:"
-        for cipher in "${supported_ciphers[@]}"; do
-            output="$output\n      ${GREEN}✓${NC} $cipher"
-        done
-    else
-        output="\n    未检测到支持的加密套件"
-    fi
-    
-    echo -e "$output"
 }
 
 # 多线程扫描函数
@@ -490,10 +464,7 @@ parallel_scan() {
     # 扫描每个目标的每个端口
     for target in "${targets[@]}"; do
         for port in "${ports[@]}"; do
-            ((thread_id++))
-            if [ $thread_id -gt $max_jobs ]; then
-                thread_id=1
-            fi
+            ((thread_id=thread_id % max_jobs + 1))
             
             read -u3
             {
@@ -502,11 +473,13 @@ parallel_scan() {
                 
                 # 更新进度
                 ((completed_tasks++))
-                local progress=$((completed_tasks * 100 / total_tasks))
                 
                 # 显示进度（每10%或最后显示）
-                if [ $((completed_tasks % (total_tasks / 10 + 1))) -eq 0 ] || [ $completed_tasks -eq $total_tasks ]; then
-                    echo -e "${YELLOW}[扫描进度] $completed_tasks/$total_tasks ($progress%)${NC}"
+                if [ $total_tasks -gt 0 ]; then
+                    local progress=$((completed_tasks * 100 / total_tasks))
+                    if [ $((completed_tasks % (total_tasks / 10 + 1))) -eq 0 ] || [ $completed_tasks -eq $total_tasks ]; then
+                        echo -e "${YELLOW}[进度] $completed_tasks/$total_tasks ($progress%)${NC}"
+                    fi
                 fi
                 
                 # 速率限制
@@ -532,12 +505,16 @@ show_summary() {
     
     echo "========================================"
     echo -e "${PURPLE}[*] 扫描摘要${NC}"
-    echo -e "${CYAN}总目标数: $total_targets${NC}"
-    echo -e "${CYAN}总端口数: $total_ports${NC}"
+    echo -e "${CYAN}目标数量: $total_targets${NC}"
+    echo -e "${CYAN}端口数量: $total_ports${NC}"
     echo -e "${CYAN}总任务数: $((total_targets * total_ports))${NC}"
     
     if [ -f "$open_ports_file" ]; then
-        local open_count=$(wc -l < "$open_ports_file" 2>/dev/null | tr -d ' ' || echo 0)
+        local open_count=0
+        if [ -s "$open_ports_file" ]; then
+            open_count=$(wc -l < "$open_ports_file" | tr -d ' ')
+        fi
+        
         echo -e "${GREEN}发现SSL服务: $open_count${NC}"
         
         if [ "$open_count" -gt 0 ]; then
@@ -551,10 +528,13 @@ show_summary() {
                 {
                     echo "OpenSSL端口扫描结果"
                     echo "扫描时间: $(date)"
-                    echo "总目标数: $total_targets"
-                    echo "总端口数: $total_ports"
+                    echo "目标: $target_spec"
+                    echo "端口: $port_spec"
+                    echo "目标数量: $total_targets"
+                    echo "端口数量: $total_ports"
                     echo "发现的SSL服务: $open_count"
                     echo ""
+                    echo "开放端口:"
                     cat "$open_ports_file"
                 } > "$output_file"
                 echo -e "${CYAN}[+] 结果已保存到: $output_file${NC}"
@@ -570,6 +550,10 @@ show_summary() {
 
 # 主函数
 main() {
+    # 保存原始参数用于输出
+    local original_target="$1"
+    local original_ports=""
+    
     # 默认参数
     local target_spec=""
     local ip_file=""
@@ -585,27 +569,19 @@ main() {
     local output_file=""
     local debug=false
     
-    # 显示所有参数用于调试
-    if [[ "$*" == *"--debug"* ]]; then
-        debug=true
-        echo -e "${RED}[DEBUG] 所有参数: $*${NC}"
-    fi
+    # 检查依赖
+    check_dependencies
     
     # 解析参数
     while [ $# -gt 0 ]; do
         case $1 in
             -i)
                 ip_file=$2
-                if [ "$debug" = true ]; then
-                    echo -e "${RED}[DEBUG] 设置IP文件: $ip_file${NC}"
-                fi
                 shift 2
                 ;;
             -p)
                 port_spec=$2
-                if [ "$debug" = true ]; then
-                    echo -e "${RED}[DEBUG] 设置端口: $port_spec${NC}"
-                fi
+                original_ports="$2"
                 shift 2
                 ;;
             -f)
@@ -614,72 +590,42 @@ main() {
                     exit 1
                 fi
                 port_spec=$2
-                if [ "$debug" = true ]; then
-                    echo -e "${RED}[DEBUG] 设置端口文件: $port_spec${NC}"
-                fi
                 shift 2
                 ;;
             -t)
                 timeout_val=$2
-                if [ "$debug" = true ]; then
-                    echo -e "${RED}[DEBUG] 设置超时: $timeout_val${NC}"
-                fi
                 shift 2
                 ;;
             -j)
                 max_jobs=$2
-                if [ "$debug" = true ]; then
-                    echo -e "${RED}[DEBUG] 设置线程数: $max_jobs${NC}"
-                fi
                 shift 2
                 ;;
             -v)
                 verbose=true
-                if [ "$debug" = true ]; then
-                    echo -e "${RED}[DEBUG] 设置详细模式${NC}"
-                fi
                 shift
                 ;;
             --check-cert)
                 check_cert=true
-                if [ "$debug" = true ]; then
-                    echo -e "${RED}[DEBUG] 设置证书检查${NC}"
-                fi
                 shift
                 ;;
             --ciphers)
                 test_ciphers=true
-                if [ "$debug" = true ]; then
-                    echo -e "${RED}[DEBUG] 设置加密套件测试${NC}"
-                fi
                 shift
                 ;;
             --rate-limit)
                 rate_limit=$2
-                if [ "$debug" = true ]; then
-                    echo -e "${RED}[DEBUG] 设置速率限制: $rate_limit${NC}"
-                fi
                 shift 2
                 ;;
             --no-ping)
                 no_ping=true
-                if [ "$debug" = true ]; then
-                    echo -e "${RED}[DEBUG] 跳过ping检测${NC}"
-                fi
                 shift
                 ;;
             --show-closed)
                 show_closed=true
-                if [ "$debug" = true ]; then
-                    echo -e "${RED}[DEBUG] 显示关闭端口${NC}"
-                fi
                 shift
                 ;;
             --output)
                 output_file=$2
-                if [ "$debug" = true ]; then
-                    echo -e "${RED}[DEBUG] 设置输出文件: $output_file${NC}"
-                fi
                 shift 2
                 ;;
             --debug)
@@ -698,9 +644,6 @@ main() {
             *)
                 if [ -z "$target_spec" ]; then
                     target_spec=$1
-                    if [ "$debug" = true ]; then
-                        echo -e "${RED}[DEBUG] 设置目标: $target_spec${NC}"
-                    fi
                 else
                     echo -e "${RED}警告: 忽略额外参数 '$1'${NC}"
                 fi
@@ -708,9 +651,6 @@ main() {
                 ;;
         esac
     done
-    
-    # 检查依赖
-    check_dependencies
     
     # 验证必须有目标
     if [ -z "$target_spec" ] && [ -z "$ip_file" ]; then
@@ -722,10 +662,12 @@ main() {
     # 如果没有指定端口，使用常见SSL端口
     if [ -z "$port_spec" ]; then
         port_spec="443,993,995,22,8443,9443"
+        original_ports="$port_spec"
         echo -e "${YELLOW}[!] 使用默认端口列表: $port_spec${NC}"
     fi
     
     # 生成目标列表
+    echo -e "${CYAN}[*] 解析目标...${NC}"
     local targets=($(generate_targets "$target_spec" "$ip_file" "$no_ping" "$debug"))
     
     if [ ${#targets[@]} -eq 0 ]; then
@@ -734,6 +676,7 @@ main() {
     fi
     
     # 生成端口列表
+    echo -e "${CYAN}[*] 解析端口...${NC}"
     local ports=($(generate_ports "$port_spec" "$debug"))
     if [ ${#ports[@]} -eq 0 ]; then
         echo -e "${RED}错误: 未找到有效端口${NC}"
@@ -747,6 +690,7 @@ main() {
     echo -n "" > "$open_ports_file"
     
     echo -e "${BLUE}[*] 开始扫描...${NC}"
+    echo -e "${BLUE}[*] 目标: ${targets[0]}${NC}"  # 只显示第一个目标
     echo -e "${BLUE}[*] 目标数量: ${#targets[@]}${NC}"
     echo -e "${BLUE}[*] 端口数量: ${#ports[@]}${NC}"
     echo -e "${BLUE}[*] 超时时间: ${timeout_val}秒${NC}"
@@ -764,44 +708,12 @@ main() {
     rm -f "$result_file" "$open_ports_file"
 }
 
-# 创建示例文件
-create_example_files() {
-    # 创建端口文件
-    cat > common_ports.txt << 'EOF'
-# 常见SSL/TLS端口
-443
-993
-995
-22
-8443
-9443
-EOF
-
-    # 创建IP列表文件
-    cat > example_ips.txt << 'EOF'
-# 示例IP列表
-192.168.1.1
-192.168.1.10
-192.168.1.100
-EOF
-
-    echo -e "${GREEN}[+] 已创建示例文件:${NC}"
-    echo -e "${GREEN}    common_ports.txt - 常见端口列表${NC}"
-    echo -e "${GREEN}    example_ips.txt - IP列表示例${NC}"
-}
-
 # 设置信号处理
 cleanup() {
     rm -f /tmp/ssl_scan_*.txt /tmp/ssl_open_ports_*.txt
 }
 
 trap cleanup EXIT INT TERM
-
-# 脚本入口
-if [ "$1" = "--create-examples" ]; then
-    create_example_files
-    exit 0
-fi
 
 # 运行主函数
 main "$@"
