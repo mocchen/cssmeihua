@@ -113,9 +113,12 @@ test_target_port() {
 
     local output=""
     local success=false
+    local tls_success=false
 
+    # 尝试 TLS 扫描
     if result=$(timeout "$timeout_val" openssl s_client -connect "$target:$port" -servername "$target" < /dev/null 2>&1); then
         if echo "$result" | grep -q "CONNECTED"; then
+            tls_success=true
             success=true
             output="[+] $target:$port - SSL/TLS 连接成功"
 
@@ -138,6 +141,31 @@ test_target_port() {
         fi
     fi
 
+    # TLS扫描失败才尝试HTTP/HTTPS
+    if [ "$tls_success" = false ]; then
+        # 尝试 HTTP
+        http_info=$(timeout "$timeout_val" curl -k -s -D - "http://$target:$port" -o /dev/null 2>/dev/null | head -n 1)
+        if [[ "$http_info" =~ ^HTTP/ ]]; then
+        # 提取协议版本和状态码
+            http_version=$(echo "$http_info" | awk '{print $1}')
+            http_status=$(echo "$http_info" | awk '{print $2}')
+            output="[+] $target:$port - HTTP服务响应 (协议: $http_version, 状态码: $http_status)"
+            success=true
+        else
+        # 尝试 HTTPS
+            https_info=$(timeout "$timeout_val" curl -k -s -D - "https://$target:$port" -o /dev/null 2>/dev/null | head -n 1)
+            if [[ "$https_info" =~ ^HTTP/ ]]; then
+                http_version=$(echo "$https_info" | awk '{print $1}')
+                http_status=$(echo "$https_info" | awk '{print $2}')
+                output="[+] $target:$port - HTTPS服务响应 (协议: $http_version, 状态码: $http_status)"
+                success=true
+            else
+                output="[!] $target:$port - 无响应"
+            fi
+        fi
+    fi
+
+    # 输出信息
     if [ "$success" = true ]; then
         echo -e "${GREEN}线程${thread_id}: $output${NC}"
         [ "$check_cert" = true ] && echo "$target:$port" >> "$open_ports_file"
