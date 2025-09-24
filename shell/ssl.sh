@@ -12,27 +12,79 @@ PURPLE='\033[0;35m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
-# 检查系统是否为 Debian
-if ! grep -qi "debian" /etc/os-release; then
-    echo -e "${RED}本脚本仅支持 Debian 系统，请在 Debian 系统上运行。${NC}"
-    exit 1
-fi
-
 # 检查用户是否为root
 if [ "$(id -u)" != "0" ]; then
     echo -e "${RED}该脚本必须以root身份运行。${NC}"
     exit 1
 fi
 
-if ! command -v openssl &>/dev/null; then
-    echo -e "${YELLOW}未检测到 openssl，正在安装 openssl...${NC}"
-    apt update
-    apt install -y openssl
-    if [ $? -ne 0 ]; then
-        echo -e "${RED}安装 openssl 失败，请手动安装后重新运行脚本。${NC}"
-        exit 1
+# 检查依赖
+check_dependencies() {
+    local deps=("openssl" "timeout")
+    local missing_deps=()
+    
+    for dep in "${deps[@]}"; do
+        if ! command -v "$dep" &>/dev/null; then
+            missing_deps+=("$dep")
+        fi
+    done
+    
+    if [ ${#missing_deps[@]} -gt 0 ]; then
+        echo -e "${YELLOW}[!] 缺少依赖: ${missing_deps[*]}${NC}"
+        echo -e "${YELLOW}[*] 正在尝试安装...${NC}"
+        
+        # 检测包管理器
+        if command -v apt &>/dev/null; then
+            # Debian/Ubuntu
+            apt update
+            for dep in "${missing_deps[@]}"; do
+                if [ "$dep" = "timeout" ]; then
+                    dep="coreutils"
+                fi
+                apt install -y "$dep"
+            done
+        elif command -v yum &>/dev/null; then
+            # CentOS/RHEL
+            for dep in "${missing_deps[@]}"; do
+                if [ "$dep" = "timeout" ]; then
+                    dep="coreutils"
+                fi
+                yum install -y "$dep"
+            done
+        elif command -v dnf &>/dev/null; then
+            # Fedora
+            for dep in "${missing_deps[@]}"; do
+                if [ "$dep" = "timeout" ]; then
+                    dep="coreutils"
+                fi
+                dnf install -y "$dep"
+            done
+        elif command -v apk &>/dev/null; then
+            # Alpine
+            apk update
+            for dep in "${missing_deps[@]}"; do
+                if [ "$dep" = "timeout" ]; then
+                    dep="coreutils"
+                fi
+                apk add "$dep"
+            done
+        else
+            echo -e "${RED}[!] 无法自动安装依赖，请手动安装: ${missing_deps[*]}${NC}"
+            echo -e "${YELLOW}[*] 然后重新运行脚本${NC}"
+            exit 1
+        fi
+        
+        # 再次检查依赖是否安装成功
+        for dep in "${deps[@]}"; do
+            if ! command -v "$dep" &>/dev/null; then
+                echo -e "${RED}[!] 依赖安装失败: $dep${NC}"
+                exit 1
+            fi
+        done
+        
+        echo -e "${GREEN}[+] 依赖安装完成${NC}"
     fi
-fi
+}
 
 # 显示用法信息
 usage() {
@@ -406,3 +458,4 @@ fi
 
 # 运行主函数
 main "$@"
+check_dependencies
