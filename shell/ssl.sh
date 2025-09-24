@@ -382,23 +382,6 @@ main() {
     rm -f "$result_file" "$open_ports_file"
 }
 
-# 创建示例文件
-create_example_files() {
-    # 创建端口文件
-    cat > common_ports.txt << 'EOF'
-# 常见SSL/TLS端口
-443
-993
-995
-22
-8443
-9443
-EOF
-
-    echo -e "${GREEN}[+] 已创建示例文件:${NC}"
-    echo -e "${GREEN}    common_ports.txt - 常见端口列表${NC}"
-}
-
 # 设置信号处理
 trap 'rm -f /tmp/ssl_scan_*.txt /tmp/ssl_open_ports_*.txt; exit 1' INT TERM
 
