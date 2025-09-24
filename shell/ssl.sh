@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # OpenSSL批量端口扫描脚本 - 修复版
-# 用法: ./ssl_port_scanner.sh <目标> [选项]
+# 用法: .ssl.sh <目标> [选项]
 
 # 颜色定义
 RED='\033[0;31m'
@@ -28,7 +28,7 @@ usage() {
     echo "示例:"
     echo "  $0 example.com -p 443"
     echo "  $0 192.168.1.1 -p 80,443,8443 -j 24"
-    echo "  $0 183.2.133.238 -p 52000-52400 -j 24 --check-cert --output result.txt"
+    echo "  $0 192.168.1.1 -p 52000-52400 -j 24 --check-cert --output result.txt"
 }
 
 # 严格的IP验证
