@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # OpenSSL批量端口扫描脚本（多线程版）- 简化版
-# 用法: ./ssl_port_scanner.sh <目标> [选项]
+# 用法: ./ssl.sh <目标> [选项]
 
 # 颜色定义
 RED='\033[0;31m'
