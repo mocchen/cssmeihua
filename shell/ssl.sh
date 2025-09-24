@@ -20,7 +20,7 @@ fi
 
 # 检查依赖
 check_dependencies() {
-    local deps=("openssl" "timeout")
+    local deps=("openssl" "timeout" "bc")
     local missing_deps=()
     
     for dep in "${deps[@]}"; do
