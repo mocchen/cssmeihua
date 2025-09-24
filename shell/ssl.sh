@@ -304,7 +304,7 @@ show_summary() {
                     echo "发现的SSL服务: $open_count"
                     echo ""
                     cat "$open_ports_file"
-                } > "$output_file"
+                } >> "$output_file"
                 echo -e "${CYAN}[+] 结果已保存到: $output_file${NC}"
             fi
         fi
