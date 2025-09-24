@@ -328,6 +328,7 @@ show_summary() {
 
 # 主函数
 main() {
+    check_dependencies
     # 默认参数
     local target=""
     local port_spec=""
@@ -458,4 +459,3 @@ fi
 
 # 运行主函数
 main "$@"
-check_dependencies
