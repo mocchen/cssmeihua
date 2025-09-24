@@ -107,7 +107,6 @@ usage() {
 }
 
 # 测试单个目标的端口
-# 测试单个目标的端口
 test_target_port() {
     local target=$1
     local port=$2
