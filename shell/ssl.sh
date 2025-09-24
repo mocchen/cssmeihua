@@ -111,8 +111,7 @@ test_target_port() {
     local port=$2
     local timeout_val=$3
     local check_cert=$4
-    local test_ciphers=$5
-    local thread_id=$6
+    local thread_id=$5
 
     local output=""
     local success=false
@@ -197,9 +196,8 @@ parallel_scan() {
     local ports=($2)
     local timeout_val=$3
     local check_cert=$4
-    local test_ciphers=$5
-    local max_jobs=$6
-    local rate_limit=$7
+    local max_jobs=$5
+    local rate_limit=$6
 
     local total_tasks=${#ports[@]}
     local completed_tasks=0
@@ -231,7 +229,7 @@ parallel_scan() {
         read -u3
         {
             # 执行扫描
-            test_target_port "$target" "$port" "$timeout_val" "$check_cert" "$test_ciphers" "$thread_id"
+            test_target_port "$target" "$port" "$timeout_val" "$check_cert" "$thread_id"
 
             # 速率限制
             if [ "$rate_limit" -gt 0 ]; then
@@ -302,7 +300,6 @@ main() {
     local max_jobs=20
     local verbose=false
     local check_cert=false
-    local test_ciphers=false    # 选项保留，但已不做套件测试
     local rate_limit=100
     local show_closed=false
     local output_file=""
@@ -336,11 +333,6 @@ main() {
                 ;;
             --check-cert)
                 check_cert=true
-                shift
-                ;;
-            --ciphers)
-                # 旧选项保留以兼容，但脚本现在不执行套件逐个测试
-                test_ciphers=true
                 shift
                 ;;
             --rate-limit)
@@ -406,7 +398,7 @@ main() {
     echo "========================================"
 
     # 执行扫描
-    parallel_scan "$target" "${ports[*]}" "$timeout_val" "$check_cert" "$test_ciphers" "$max_jobs" "$rate_limit"
+    parallel_scan "$target" "${ports[*]}" "$timeout_val" "$check_cert" "$max_jobs" "$rate_limit"
 
     # 显示摘要
     show_summary "$target" "${#ports[@]}" "$open_ports_file" "$output_file"
