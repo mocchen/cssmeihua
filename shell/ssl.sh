@@ -268,9 +268,13 @@ show_summary() {
                 echo -e "  ${GREEN}✓${NC} $service"
             done
 
-            # 保存结果到文件
+            # 保存结果到文件（追加模式，文件已存在且非空时先加换行）
             if [ -n "$output_file" ]; then
+                if [ -f "$output_file" ] && [ -s "$output_file" ]; then
+                    echo "" >> "$output_file"
+                fi
                 {
+                    echo "========================================"
                     echo "OpenSSL端口扫描结果"
                     echo "扫描时间: $(date)"
                     echo "目标: $target"
