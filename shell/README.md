@@ -20,7 +20,7 @@ wget https://raw.githubusercontent.com/mocchen/cssmeihua/refs/heads/mochen/shell
 用法
 ```
 用法: ssl.sh <目标> [选项]
-
+  
 目标格式:
   域名: example.com
   单个IP: 192.168.1.1
@@ -35,6 +35,8 @@ wget https://raw.githubusercontent.com/mocchen/cssmeihua/refs/heads/mochen/shell
   --rate-limit     启用速率限制(毫秒)，默认: 100
   --show-closed    显示关闭的端口
   --output <文件>  将结果保存到文件
+  --http           开启http扫描
+  --socks          开启socks扫描
 
 示例:
   ssl.sh example.com -p 443 -j 50
