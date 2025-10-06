@@ -84,7 +84,7 @@ dns:
   fake-ip-range: 198.18.0.1/16
   fake-ip-filter-mode: blacklist
   fake-ip-filter:
-    - 'geosite:fakeip-filter'
+    - "geosite:fakeip-filter"
 tun:
   enable: false
   stack: system
@@ -326,4 +326,5 @@ rules:
   - IP-CIDR,100.64.0.0/10,DIRECT
   - IP-CIDR,127.0.0.0/8,DIRECT
   - MATCH,🐟 漏网之鱼
+
 
