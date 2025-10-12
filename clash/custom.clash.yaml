@@ -46,23 +46,23 @@ dns:
       - 223.5.5.5                   # 阿里 UDP
       - 119.29.29.29                # 腾讯 UDP
     "geosite:gfw":                  # 新增：GFW 列表域名强制走国外 DNS
-      - https://1.1.1.1/dns-query
+      - https://cloudflare-dns.com/dns-query
       - https://dns.google/dns-query
       - 1.1.1.1
       - 8.8.8.8
     "geosite:geolocation-!cn":      # 新增：非中国大陆域名强制走国外 DNS
-      - https://1.1.1.1/dns-query
+      - https://cloudflare-dns.com/dns-query
       - https://dns.google/dns-query
       - 1.1.1.1
       - 8.8.8.8
     "full-nameserver":              # 新增：最终兜底，所有未匹配的域名查询强制走国外 DNS
-      - https://1.1.1.1/dns-query
+      - https://cloudflare-dns.com/dns-query
       - https://dns.google/dns-query
       - 1.1.1.1
       - 8.8.8.8
   fallback:
     - tls://8.8.4.4
-    - tls://1.1.1.1
+    - tls://1.1.1.1  
   fallback-filter:
     geoip: true
     geoip-code: CN
@@ -93,6 +93,9 @@ dns:
     - "*.local"
     - "*.home.arpa"
     - "*.direct"
+    - "*.orb.local"
+    - "*.ip6-localhost"
+    - "*.ip6-loopback"
     - "time.*.com"
     - "time.*.gov"
     - "time.*.edu.cn"
@@ -203,16 +206,31 @@ dns:
     - "+.orayimg.com"
     - "+.gcloudcs.com"
     - "+.gcloudsdk.com"
+    - "*.instant.arubanetworks.com"
+    - "*.setmeup.arubanetworks.com"
+    - "*.router.asus.com"
+    - "*.www.asusrouter.com"
+    - "*.hiwifi.com"
+    - "*.leike.cc"
+    - "*.miwifi.com"
+    - "*.my.router"
+    - "*.p.to"
+    - "*.peiluyou.com"
+    - "*.phicomm.me"
+    - "*.router.ctc"
+    - "*.routerlogin.com"
+    - "*.tendawifi.com"
+    - "*.zte.home"
+    - "*.tplogin.cn"
+    - "*.wifi.cmcc"
 tun:
-  enable: false
+  enable: true
   stack: system
   device: mochen
   auto-route: true
-  auto-detect-interface: true
   endpoint-independent-nat: true
-  gso: true
-  gso-max-size: 65536
-  dns-hijack:
+  auto-detect-interface: true
+  endpoint-independents-hijack:
     - any:53
     - tcp://any:53
   strict-route: false
@@ -365,10 +383,28 @@ proxy-groups:
      
 rules:
   - GEOSITE,category-ads-all,REJECT
+  - DOMAIN,instant.arubanetworks.com,DIRECT
+  - DOMAIN,setmeup.arubanetworks.com,DIRECT
+  - DOMAIN,router.asus.com,DIRECT
+  - DOMAIN,www.asusrouter.com,DIRECT
+  - DOMAIN-SUFFIX,hiwifi.com,DIRECT
+  - DOMAIN-SUFFIX,leike.cc,DIRECT
+  - DOMAIN-SUFFIX,miwifi.com,DIRECT
+  - DOMAIN-SUFFIX,my.router,DIRECT
+  - DOMAIN-SUFFIX,p.to,DIRECT
+  - DOMAIN-SUFFIX,peiluyou.com,DIRECT
+  - DOMAIN-SUFFIX,phicomm.me,DIRECT
+  - DOMAIN-SUFFIX,router.ctc,DIRECT
+  - DOMAIN-SUFFIX,routerlogin.com,DIRECT
+  - DOMAIN-SUFFIX,tendawifi.com,DIRECT
+  - DOMAIN-SUFFIX,zte.home,DIRECT
+  - DOMAIN-SUFFIX,tplogin.cn,DIRECT
+  - DOMAIN-SUFFIX,wifi.cmcc,DIRECT
   - DOMAIN-SUFFIX,bilibili.com, 📺 Bilibili
   - GEOSITE,bilibili, 📺 Bilibili
   - GEOSITE,biliintl, 📺 Bilibili
-  - DOMAIN-SUFFIX,mochen.one,🚀 默认代理
+  - DOMAIN-SUFFIX,browserleaks.com, 🚀 默认代理
+  - DOMAIN-SUFFIX,ping.pe,🚀 默认代理
   - DOMAIN-SUFFIX,dgameglobal.com,🎮 游戏
   - DOMAIN-SUFFIX,wilds.monsterhunter.com,🎮 游戏
   - DOMAIN-SUFFIX,capcom.com,🎮 游戏
@@ -402,8 +438,11 @@ rules:
   - PROCESS-NAME,UE4PrereqSetup_x64.exe,🎮 游戏
   - PROCESS-NAME,DeltaForceClient.exe,🎮 游戏
   - PROCESS-NAME,EAAntiCheat.Installer.exe,🎮 游戏
-  - PROCESS-NAME,bf6event.exe,🎮 游戏
+  - PROCESS-NAME,bf6.exe,🎮 游戏
+  - PROCESS-NAME,bf6.exe,🎮 游戏
   - PROCESS-NAME,EAAntiCheat.GameServiceLauncher.exe,🎮 游戏
+  - PROCESS-NAME,EAAntiCheat.GameService.exe,🎮 游戏
+  - DOMAIN-SUFFIX,eaanticheat.ac.ea.com,🎮 游戏
   - GEOSITE,steam@cn,🎯 直连
   - GEOSITE,steam,🎮 steam
   - GEOSITE,apple,🍎 Apple
@@ -438,12 +477,15 @@ rules:
   - GEOIP,netflix,🎥 NETFLIX
   - GEOIP,telegram,📲 Telegram
   - GEOIP,CN,🎯 直连
-  - IP-CIDR,10.0.0.0/8,DIRECT
-  - IP-CIDR,172.16.0.0/12,DIRECT
-  - IP-CIDR,192.168.0.0/16,DIRECT
-  - IP-CIDR,100.64.0.0/10,DIRECT
-  - IP-CIDR,127.0.0.0/8,DIRECT
+  - IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
+  - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
+  - IP-CIDR,100.64.0.0/10,DIRECT,no-resolve
+  - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
+  - IP-CIDR,198.18.0.0/16,DIRECT,no-resolve
+  - IP-CIDR,224.0.0.0/4,DIRECT,no-resolve
+  - IP-CIDR6,::1/128,DIRECT,no-resolve
+  - IP-CIDR6,fc00::/7,DIRECT,no-resolve
+  - IP-CIDR6,fe80::/10,DIRECT,no-resolve
+  - IP-CIDR6,fd00::/8,DIRECT,no-resolve
   - MATCH,🐟 漏网之鱼
-
-
-
