@@ -32,7 +32,7 @@ ip route add default via $ENS20_GATEWAY dev ens20
 # 配置 IX 回程路由表
 ip route add default via $IX_GATEWAY dev ens18 table $IX_TABLE
 ip route add 165.101.144.0/24 dev ens18 src $IX_IP table $IX_TABLE
-ip route add 192.168.80.0/24 dev ens20 src 192.168.80.4 table $IX_TABLE
+ip route add 192.168.80.0/24 dev ens20 src $IX_SDWAN_IP table $IX_TABLE
 ip route add 10.0.0.0/24 dev ens19 src $IX_Intranet_IP table $IX_TABLE
 
 # 添加策略路由规则
