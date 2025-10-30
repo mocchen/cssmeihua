@@ -60,7 +60,7 @@ sysctl -w net.ipv4.conf.all.rp_filter=2
 ip route flush cache
 
 echo "============== 配置完成 ==============="
-echo "默认路由: ens20 → $ENS20_GATEWAY"
+echo "默认路由: ens20 → $IX_SDWAN_IP"
 echo "IX回程: ens18 → $IX_GATEWAY"
 echo "策略路由表: $IX_TABLE (ID: $IX_TABLE_ID)"
 echo "连接标记: $IX_MARK"
