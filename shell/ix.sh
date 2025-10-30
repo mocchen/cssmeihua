@@ -26,7 +26,7 @@ ip route flush table $IX_TABLE
 ## 配置新路由
 
 # 设置默认路由走 ens20（主动出站流量）
-ip route add default via $IX_SDWAN_IP dev ens20
+ip route add default via $HK_IP dev ens20
 
 # 配置 IX 回程路由表
 ip route add default via $IX_GATEWAY dev ens18 table $IX_TABLE
