@@ -3,7 +3,6 @@
 ## 变量定义
 IX_IP="165.101.144.137"
 IX_GATEWAY="165.101.144.1"
-IX_SDWAN_IP="192.168.80.12"
 IX_Intranet_IP=＂10.0.0.7＂
 HK_IP="192.168.80.13" 
 IX_TABLE="ix_return"
@@ -32,7 +31,7 @@ ip route add default via $IX_SDWAN_IP dev ens20
 # 配置 IX 回程路由表
 ip route add default via $IX_GATEWAY dev ens18 table $IX_TABLE
 ip route add 165.101.144.0/24 dev ens18 src $IX_IP table $IX_TABLE
-ip route add 192.168.80.0/24 dev ens20 src $IX_SDWAN_IP table $IX_TABLE
+ip route add 192.168.80.0/24 dev ens20 src $HK_IP table $IX_TABLE
 ip route add 10.0.0.0/24 dev ens19 src $IX_Intranet_IP table $IX_TABLE
 
 # 添加策略路由规则
@@ -60,7 +59,7 @@ sysctl -w net.ipv4.conf.all.rp_filter=2
 ip route flush cache
 
 echo "============== 配置完成 ==============="
-echo "默认路由: ens20 → $IX_SDWAN_IP"
+echo "默认路由: ens20 → $HK_IP"
 echo "IX回程: ens18 → $IX_GATEWAY"
 echo "策略路由表: $IX_TABLE (ID: $IX_TABLE_ID)"
 echo "连接标记: $IX_MARK"
