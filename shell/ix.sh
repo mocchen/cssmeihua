@@ -1,9 +1,10 @@
 #!/bin/bash
 
 ## 变量定义
-IX_IP="165.101.144.x"           # 替换为实际IX IP
-IX_GATEWAY="165.101.144.1"
-ENS20_GATEWAY="192.168.80.10"   # 修正为 .10
+IX_IP="165.101.144.137"
+IX_SDWAN_GATEWAY="165.101.144.1"
+IX_Intranet_IP=＂10.0.0.7＂
+HK_IP="192.168.80.13" 
 IX_TABLE="ix_return"
 IX_TABLE_ID="100"
 IX_MARK="100"
@@ -31,7 +32,7 @@ ip route add default via $ENS20_GATEWAY dev ens20
 ip route add default via $IX_GATEWAY dev ens18 table $IX_TABLE
 ip route add 165.101.144.0/24 dev ens18 src $IX_IP table $IX_TABLE
 ip route add 192.168.80.0/24 dev ens20 src 192.168.80.4 table $IX_TABLE
-ip route add 10.0.0.0/24 dev ens19 src 10.0.0.3 table $IX_TABLE
+ip route add 10.0.0.0/24 dev ens19 src $IX_Intranet_IP table $IX_TABLE
 
 # 添加策略路由规则
 # 源 IP 为 IX 地址的流量使用 ix_return 表
