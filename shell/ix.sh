@@ -4,6 +4,7 @@
 IX_IP="165.101.144.137"
 IX_GATEWAY="165.101.144.1"
 IX_Intranet_IP=＂10.0.0.7＂
+IX_Int_IP="192.168.80.12"
 HK_IP="192.168.80.13" 
 IX_TABLE="ix_return"
 IX_TABLE_ID="100"
@@ -31,7 +32,7 @@ ip route add default via $HK_IP dev ens20
 # 配置 IX 回程路由表
 ip route add default via $IX_GATEWAY dev ens18 table $IX_TABLE
 ip route add 165.101.144.0/24 dev ens18 src $IX_IP table $IX_TABLE
-ip route add 192.168.80.0/24 dev ens20 src $HK_IP table $IX_TABLE
+ip route add 192.168.80.0/24 dev ens20 src $IX_Int_IP table $IX_TABLE
 ip route add 10.0.0.0/24 dev ens19 src $IX_Intranet_IP table $IX_TABLE
 
 # 添加策略路由规则
