@@ -101,8 +101,8 @@ update_sources() {
     SOURCES_LIST=$(cat << EOF
 deb https://deb.debian.org/debian/ $DIST main contrib $EXTRA_COMPONENTS
 deb-src https://deb.debian.org/debian/ $DIST main contrib $EXTRA_COMPONENTS
-deb https://deb.debian.org/debian-security/ $DIST/updates main contrib $EXTRA_COMPONENTS
-deb-src https://deb.debian.org/debian-security/ $DIST/updates main contrib $EXTRA_COMPONENTS
+deb https://deb.debian.org/debian-security/ $DIST-security main contrib $EXTRA_COMPONENTS
+deb-src https://deb.debian.org/debian-security/ $DIST-security main contrib $EXTRA_COMPONENTS
 EOF
 )
     else
