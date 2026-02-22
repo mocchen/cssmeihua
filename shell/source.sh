@@ -95,21 +95,29 @@ update_sources() {
         EXTRA_COMPONENTS="non-free"
     fi
 
-    # 生成 sources.list
+    # 根据版本生成不同的 sources.list
+    if [[ "$VERSION" == "11" ]]; then
+    # bullseye 已 EOL，-updates 和 -backports 已失效，security 路径格式不同
     SOURCES_LIST=$(cat << EOF
 deb https://deb.debian.org/debian/ $DIST main contrib $EXTRA_COMPONENTS
 deb-src https://deb.debian.org/debian/ $DIST main contrib $EXTRA_COMPONENTS
-
+deb https://deb.debian.org/debian-security/ $DIST/updates main contrib $EXTRA_COMPONENTS
+deb-src https://deb.debian.org/debian-security/ $DIST/updates main contrib $EXTRA_COMPONENTS
+EOF
+)
+    else
+    SOURCES_LIST=$(cat << EOF
+deb https://deb.debian.org/debian/ $DIST main contrib $EXTRA_COMPONENTS
+deb-src https://deb.debian.org/debian/ $DIST main contrib $EXTRA_COMPONENTS
 deb https://deb.debian.org/debian/ $DIST-updates main contrib $EXTRA_COMPONENTS
 deb-src https://deb.debian.org/debian/ $DIST-updates main contrib $EXTRA_COMPONENTS
-
 deb https://deb.debian.org/debian/ $DIST-backports main contrib $EXTRA_COMPONENTS
 deb-src https://deb.debian.org/debian/ $DIST-backports main contrib $EXTRA_COMPONENTS
-
 deb https://deb.debian.org/debian-security/ $DIST-security main contrib $EXTRA_COMPONENTS
 deb-src https://deb.debian.org/debian-security/ $DIST-security main contrib $EXTRA_COMPONENTS
 EOF
     )
+    fi
 
     # 更新 sources.list
     echo "$SOURCES_LIST" > /etc/apt/sources.list
