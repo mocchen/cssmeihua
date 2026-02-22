@@ -97,7 +97,6 @@ update_sources() {
 
     # 根据版本生成不同的 sources.list
     if [[ "$VERSION" == "11" ]]; then
-    # bullseye 已 EOL，-updates 和 -backports 已失效，security 路径格式不同
     SOURCES_LIST=$(cat << EOF
 deb https://deb.debian.org/debian/ $DIST main contrib $EXTRA_COMPONENTS
 deb-src https://deb.debian.org/debian/ $DIST main contrib $EXTRA_COMPONENTS
