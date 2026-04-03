@@ -139,21 +139,67 @@ restore_config() {
     exit 0
 }
 
+# 函数: calc_bdp_bytes
+# 作用: 根据目标带宽与 RTT 估算带宽-时延积（BDP），并乘以安全系数作为缓冲上限参考
+calc_bdp_bytes() {
+    local bw_mbps="$1"
+    local rtt_ms="$2"
+    local factor="$3"
+
+    if [[ -z "$bw_mbps" || -z "$rtt_ms" || -z "$factor" ]]; then
+        echo 0
+        return
+    fi
+
+    awk -v bw="$bw_mbps" -v rtt="$rtt_ms" -v factor="$factor" 'BEGIN {
+        bytes_per_sec = bw * 1000000 / 8
+        bdp = bytes_per_sec * (rtt / 1000)
+        printf "%.0f", bdp * factor
+    }'
+}
+
+# 函数: clamp_value
+# 作用: 将数值限制在指定范围内
+clamp_value() {
+    local value="$1"
+    local min="$2"
+    local max="$3"
+
+    if (( value < min )); then
+        echo "$min"
+    elif (( value > max )); then
+        echo "$max"
+    else
+        echo "$value"
+    fi
+}
+
 # 函数: calc_params
-# 作用: 计算并收敛各档位参数，含低内存自动调整
+# 作用: 计算并收敛各档位参数，按统一上限策略进行高 RTT 吞吐优化
 calc_params() {
-    local memory_kb memory_mb
+    local memory_kb memory_mb bdp_bytes bdp_cap_by_mem
     memory_kb=$(awk '/MemTotal/ {print $2}' /proc/meminfo)
     memory_mb=$((memory_kb / 1024))
-
-    low_mem=0
-    if [[ $memory_mb -le 1024 ]]; then
-        low_mem=1
-    fi
 
     fs_file_max=$((memory_mb * 256))
     if [[ $fs_file_max -gt 2097152 ]]; then
         fs_file_max=2097152
+    fi
+
+    bdp_bytes=$(calc_bdp_bytes "$target_bw_mbps" "$target_rtt_ms" 3)
+    if [[ -z "$bdp_bytes" || "$bdp_bytes" -le 0 ]]; then
+        bdp_bytes=33554432
+    fi
+
+    bdp_cap_by_mem=$((memory_mb * 1024 * 1024 / 8))
+    if [[ $bdp_cap_by_mem -lt 16777216 ]]; then
+        bdp_cap_by_mem=16777216
+    fi
+    if [[ $bdp_cap_by_mem -gt 268435456 ]]; then
+        bdp_cap_by_mem=268435456
+    fi
+    if [[ $bdp_bytes -gt $bdp_cap_by_mem ]]; then
+        bdp_bytes=$bdp_cap_by_mem
     fi
 
     case "$profile" in
@@ -164,6 +210,8 @@ calc_params() {
             if [[ $wmem_max -gt 16777216 ]]; then wmem_max=16777216; fi
             rmem_default=262144
             wmem_default=262144
+            tcp_rmem_mid=524288
+            tcp_wmem_mid=524288
             netdev_max_backlog=$((memory_mb * 64))
             if [[ $netdev_max_backlog -gt 65536 ]]; then netdev_max_backlog=65536; fi
             somaxconn=$((memory_mb * 4))
@@ -175,6 +223,7 @@ calc_params() {
             tcp_tw_reuse=0
             tcp_fastopen=0
             tcp_ecn=0
+            tcp_moderate_rcvbuf=1
             ;;
         conservative)
             rmem_max=$((memory_mb * 1024 * 18))
@@ -188,6 +237,10 @@ calc_params() {
                 rmem_default=1048576
                 wmem_default=1048576
             fi
+            tcp_rmem_mid=4194304
+            tcp_wmem_mid=1048576
+            if [[ $bdp_bytes -gt $rmem_max ]]; then rmem_max=$bdp_bytes; fi
+            if [[ $bdp_bytes -gt $wmem_max ]]; then wmem_max=$bdp_bytes; fi
             netdev_max_backlog=$((memory_mb * 128))
             if [[ $netdev_max_backlog -gt 131072 ]]; then netdev_max_backlog=131072; fi
             somaxconn=$((memory_mb * 8))
@@ -199,12 +252,15 @@ calc_params() {
             tcp_tw_reuse=0
             tcp_fastopen=0
             tcp_ecn=0
+            tcp_moderate_rcvbuf=1
             ;;
         aggressive)
             rmem_max=$((memory_mb * 1024 * 32))
             wmem_max=$((memory_mb * 1024 * 32))
-            if [[ $rmem_max -gt 67108864 ]]; then rmem_max=67108864; fi
-            if [[ $wmem_max -gt 67108864 ]]; then wmem_max=67108864; fi
+            if [[ $rmem_max -gt 134217728 ]]; then rmem_max=134217728; fi
+            if [[ $wmem_max -gt 134217728 ]]; then wmem_max=134217728; fi
+            if [[ $bdp_bytes -gt $rmem_max ]]; then rmem_max=$bdp_bytes; fi
+            if [[ $bdp_bytes -gt $wmem_max ]]; then wmem_max=$bdp_bytes; fi
             if [[ $memory_mb -lt 4096 ]]; then
                 rmem_default=1048576
                 wmem_default=1048576
@@ -212,6 +268,8 @@ calc_params() {
                 rmem_default=2097152
                 wmem_default=2097152
             fi
+            tcp_rmem_mid=8388608
+            tcp_wmem_mid=2097152
             netdev_max_backlog=$((memory_mb * 256))
             if [[ $netdev_max_backlog -gt 262144 ]]; then netdev_max_backlog=262144; fi
             somaxconn=$((memory_mb * 16))
@@ -223,12 +281,18 @@ calc_params() {
             tcp_tw_reuse=1
             tcp_fastopen=3
             tcp_ecn=1
+            tcp_moderate_rcvbuf=1
             ;;
         *)
             echo -e "${RED}[错误] 未知配置档位${NC}"
             exit 1
             ;;
     esac
+
+    rmem_max=$(clamp_value "$rmem_max" 8388608 268435456)
+    wmem_max=$(clamp_value "$wmem_max" 8388608 268435456)
+    tcp_rmem_mid=$(clamp_value "$tcp_rmem_mid" 262144 "$rmem_max")
+    tcp_wmem_mid=$(clamp_value "$tcp_wmem_mid" 262144 "$wmem_max")
 
     conntrack_max=65536
     conntrack_buckets=8192
@@ -239,31 +303,6 @@ calc_params() {
     conntrack_syn_recv=30
     conntrack_udp_timeout=30
     conntrack_udp_timeout_stream=120
-
-    if [[ $low_mem -eq 1 ]]; then
-        if [[ $memory_mb -le 512 ]]; then
-            conntrack_max=16384
-            conntrack_buckets=4096
-        else
-            conntrack_max=32768
-            conntrack_buckets=8192
-        fi
-
-        if [[ $rmem_max -gt 8388608 ]]; then rmem_max=8388608; fi
-        if [[ $wmem_max -gt 8388608 ]]; then wmem_max=8388608; fi
-        rmem_default=262144
-        wmem_default=262144
-
-        if [[ $netdev_max_backlog -gt 32768 ]]; then netdev_max_backlog=32768; fi
-        if [[ $somaxconn -gt 8192 ]]; then somaxconn=8192; fi
-        if [[ $tcp_max_syn_backlog -gt 4096 ]]; then tcp_max_syn_backlog=4096; fi
-        tcp_fin_timeout=20
-        tcp_syn_retries=4
-        tcp_synack_retries=4
-        tcp_tw_reuse=0
-        tcp_fastopen=0
-        tcp_ecn=0
-    fi
 }
 
 # 函数: supports_bbr
@@ -311,13 +350,13 @@ net.core.rmem_max = $rmem_max
 net.core.wmem_max = $wmem_max
 net.core.netdev_max_backlog = $netdev_max_backlog
 net.core.somaxconn = $somaxconn
-net.core.optmem_max = 65536
-net.core.netdev_budget = 600
-net.core.netdev_budget_usecs = 8000
+net.core.optmem_max = 262144
+net.core.netdev_budget = 1200
+net.core.netdev_budget_usecs = 16000
 
 # TCP 连接优化
-net.ipv4.tcp_rmem = 4096 87380 $rmem_max
-net.ipv4.tcp_wmem = 4096 16384 $wmem_max
+net.ipv4.tcp_rmem = 4096 $tcp_rmem_mid $rmem_max
+net.ipv4.tcp_wmem = 4096 $tcp_wmem_mid $wmem_max
 net.ipv4.tcp_fin_timeout = $tcp_fin_timeout
 net.ipv4.tcp_max_syn_backlog = $tcp_max_syn_backlog
 net.ipv4.tcp_tw_reuse = $tcp_tw_reuse
@@ -332,13 +371,17 @@ net.ipv4.tcp_syn_retries = $tcp_syn_retries
 net.ipv4.tcp_rfc1337 = 1
 net.ipv4.tcp_timestamps = 1
 net.ipv4.tcp_window_scaling = 1
-net.ipv4.tcp_no_metrics_save = 1
+net.ipv4.tcp_moderate_rcvbuf = $tcp_moderate_rcvbuf
+net.ipv4.tcp_no_metrics_save = 0
 net.ipv4.tcp_sack = 1
 net.ipv4.tcp_dsack = 1
-net.ipv4.tcp_adv_win_scale = 2
-net.ipv4.tcp_notsent_lowat = 16384
+net.ipv4.tcp_adv_win_scale = 1
+net.ipv4.tcp_notsent_lowat = 262144
 net.ipv4.tcp_ecn = $tcp_ecn
 
+"
+
+    content+="
 # UDP
 net.ipv4.udp_rmem_min = 16384
 net.ipv4.udp_wmem_min = 16384
@@ -418,14 +461,7 @@ write_limits() {
     if [[ $nofile_max -gt 1048576 ]]; then
         nofile_max=1048576
     fi
-    if [[ ${low_mem:-0} -eq 1 ]]; then
-        if [[ $nofile_max -gt 65535 ]]; then
-            nofile_max=65535
-        fi
-        nproc_max=32768
-    else
-        nproc_max=65535
-    fi
+    nproc_max=65535
 
     cat > "$LIMITS_FILE" << EOF
 * soft nofile $nofile_max
@@ -523,6 +559,23 @@ case "$option" in
         ;;
 esac
 
+echo -e "${BLUE}高 RTT 吞吐优化目标（默认按 1Gbps 设计）：${NC}"
+read -rp "目标 RTT（毫秒，默认 150）: " target_rtt_ms
+if [[ -z "$target_rtt_ms" ]]; then
+    target_rtt_ms=150
+elif [[ ! "$target_rtt_ms" =~ ^[0-9]+$ ]] || [[ "$target_rtt_ms" -le 0 ]]; then
+    echo -e "${RED}[错误] RTT 请输入正整数毫秒值${NC}"
+    exit 1
+fi
+
+read -rp "目标带宽（Mbps，默认 1000）: " target_bw_mbps
+if [[ -z "$target_bw_mbps" ]]; then
+    target_bw_mbps=1000
+elif [[ ! "$target_bw_mbps" =~ ^[0-9]+$ ]] || [[ "$target_bw_mbps" -le 0 ]]; then
+    echo -e "${RED}[错误] 目标带宽请输入正整数 Mbps${NC}"
+    exit 1
+fi
+
 read -rp "是否开启 IP 转发（路由/NAT 场景）？[y/N]: " forwarding
 if [[ -n "$forwarding" && ! "$forwarding" =~ ^[YyNn]$ ]]; then
     echo -e "${RED}[错误] 请输入 y 或 n${NC}"
@@ -541,5 +594,8 @@ write_limits
 write_journald
 persist_modules
 apply_config
+
+echo -e "${GREEN}[信息] 已按 RTT=${target_rtt_ms}ms、目标带宽=${target_bw_mbps}Mbps 生成调优参数${NC}"
+echo -e "${YELLOW}[提示] 想接近跑满 1Gbps，系统调优只是其中一环；还取决于网卡 offload、队列、ISP/链路质量、对端拥塞控制与应用层并发。${NC}"
 
 exit 0
