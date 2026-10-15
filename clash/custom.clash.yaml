@@ -8,7 +8,10 @@ log-level: info
 external-controller: 127.0.0.1:9090
 tcp-concurrent: true
 find-process-mode: strict
-geodata-mode: true #【Meta专属】使用geoip.dat数据库(默认：false使用mmdb数据库)
+keep-alive-interval: 15
+keep-alive-idle: 60
+disable-keep-alive: false
+geodata-mode: true 
 geodata-loader: standard
 geo-auto-update: true
 geo-update-interval: 24
@@ -56,11 +59,11 @@ dns:
   fake-ip-range: 198.18.0.1/16
   fake-ip-filter-mode: rule
   fake-ip-filter:
-    - "rule-set,fake-ip-filter"
-    - "geosite:private"
-    - "geosite:connectivity-check"
-    - "geosite:cn"
-    
+    - 'RULE-SET,fake-ip-filter,real-ip'
+    - 'GEOSITE,private,real-ip'
+    - 'GEOSITE,connectivity-check,real-ip'
+    - 'MATCH,fake-ip'
+
 rule-providers:
   fake-ip-filter:
     type: http
@@ -69,7 +72,7 @@ rule-providers:
     url: "https://raw.githubusercontent.com/mocchen/cssmeihua/refs/heads/mochen/clash/rules/fake-ip-filter.yaml"
     interval: 86400
     path: ./rules/fake-ip-filter.yaml
-    proxy: DIRECT
+    proxy: 默认代理
     size-limit: 0
 
 tun:
@@ -102,153 +105,184 @@ ntp:
   port: 123
   interval: 30
   write-to-system: false
+
 proxies: []
 
 proxy-groups:
-  - name: 🚀 默认代理
+  - name: 默认代理
     type: select
+    icon: https://raw.githubusercontent.com/Hawaiine/Oasisic-Icons/main/icons/System/Proxy/Proxy.png
     proxies:
-      - ♻️ 自动选择
-      - 🔯 故障转移
-      - 🔮 负载均衡
+      - 自动选择
+      - 故障转移
+      - 负载均衡
 
-  - name: 🎮 游戏
+  - name: 游戏
     type: select
+    icon: https://raw.githubusercontent.com/Hawaiine/Oasisic-Icons/main/icons/System/Game/Game.png
     proxies: []
 
-  - name: 🎮 steam
+  - name: steam
     type: select
+    icon: https://raw.githubusercontent.com/Hawaiine/Oasisic-Icons/main/icons/Game/Steam/Steam.png
     proxies:
-      - 🚀 默认代理
-      - ♻️ 自动选择
+      - 默认代理
+      - 自动选择
       - DIRECT
 
-  - name: 📹 YouTube
+  - name: YouTube
     type: select
+    icon: https://raw.githubusercontent.com/Hawaiine/Oasisic-Icons/main/icons/Google/YouTube/YouTube.png
     proxies:
-      - 🚀 默认代理
-      - ♻️ 自动选择
+      - 默认代理
+      - 自动选择
 
-  - name: 🍀 Google
+  - name: Google
     type: select
+    icon: https://raw.githubusercontent.com/Hawaiine/Oasisic-Icons/main/icons/Google/Google/Google.png
     proxies:
-      - 🚀 默认代理
-      - ♻️ 自动选择
+      - 默认代理
+      - 自动选择
 
-  - name: 📺 Bilibili
+  - name: Bilibili
     type: select
-    proxies:
-      - DIRECT
-      - 🚀 默认代理
-      - ♻️ 自动选择
-
-  - name: 🤖 ChatGPT
-    type: select
-    proxies:
-      - 🚀 默认代理
-      - ♻️ 自动选择
-
-  - name: 👨🏿‍💻 GitHub
-    type: select
-    proxies:
-      - 🚀 默认代理
-      - ♻️ 自动选择
-
-  - name: 🐬 OneDrive
-    type: select
+    icon: https://raw.githubusercontent.com/Hawaiine/Oasisic-Icons/main/icons/Media/bilibili/bilibili.png
     proxies:
       - DIRECT
-      - 🚀 默认代理
-      - ♻️ 自动选择
+      - 默认代理
+      - 自动选择
 
-  - name: 🪟 Microsoft
+  - name: AI
     type: select
+    icon: https://raw.githubusercontent.com/Hawaiine/Oasisic-Icons/main/icons/AI/OpenAI/OpenAI.png
+    proxies:
+      - 默认代理
+      - 自动选择
+
+  - name: GitHub
+    type: select
+    icon: https://raw.githubusercontent.com/Hawaiine/Oasisic-Icons/main/icons/Microsoft/GitHub/GitHub.png
+    proxies:
+      - 默认代理
+      - 自动选择
+
+  - name: OneDrive
+    type: select
+    icon: https://raw.githubusercontent.com/Hawaiine/Oasisic-Icons/main/icons/Microsoft/OneDrive/OneDrive.png
     proxies:
       - DIRECT
-      - 🚀 默认代理
-      - ♻️ 自动选择
+      - 默认代理
+      - 自动选择
 
-  - name: 🎵 TikTok
+  - name: Microsoft
     type: select
-    proxies:
-      - 🚀 默认代理
-      - ♻️ 自动选择
-
-  - name: 📲 Telegram
-    type: select
-    proxies:
-      - 🚀 默认代理
-      - ♻️ 自动选择
-
-  - name: 🎥 NETFLIX
-    type: select
-    proxies:
-      - 🚀 默认代理
-      - ♻️ 自动选择
-
-  - name: ✈️ Speedtest
-    type: select
-    proxies:
-      - 🚀 默认代理
-      - ♻️ 自动选择
-      - DIRECT
-
-  - name: 💶 PayPal
-    type: select
-    proxies:
-      - 🚀 默认代理
-      - ♻️ 自动选择
-
-  - name: 🍎 Apple
-    type: select
+    icon: https://raw.githubusercontent.com/Hawaiine/Oasisic-Icons/main/icons/Microsoft/Microsoft/Microsoft.png
     proxies:
       - DIRECT
-      - 🚀 默认代理
-      - ♻️ 自动选择
+      - 默认代理
+      - 自动选择
 
-  - name: 🐟 漏网之鱼
+  - name: TikTok
     type: select
+    icon: https://raw.githubusercontent.com/Hawaiine/Oasisic-Icons/main/icons/ByteDance/TikTok/TikTok.png
     proxies:
-      - 🚀 默认代理
-      - ♻️ 自动选择
+      - 默认代理
+      - 自动选择
+
+  - name: Telegram
+    type: select
+    icon: https://raw.githubusercontent.com/Hawaiine/Oasisic-Icons/main/icons/Communication/Telegram/Telegram.png
+    proxies:
+      - 默认代理
+      - 自动选择
+
+  - name: NETFLIX
+    type: select
+    icon: https://raw.githubusercontent.com/Hawaiine/Oasisic-Icons/main/icons/Media/Netflix/Netflix.png
+    proxies:
+      - 默认代理
+      - 自动选择
+
+  - name: Speedtest
+    type: select
+    icon: https://raw.githubusercontent.com/Hawaiine/Oasisic-Icons/main/icons/Utilities/Speedtest/Speedtest.png
+    proxies:
+      - 默认代理
+      - 自动选择
       - DIRECT
 
-  - name: 🎯 直连
+  - name: PayPal
     type: select
+    icon: https://raw.githubusercontent.com/Hawaiine/Oasisic-Icons/main/icons/Payment/PayPal/PayPal.png
+    proxies:
+      - 默认代理
+      - 自动选择
+
+  - name: Apple
+    type: select
+    icon: https://raw.githubusercontent.com/Hawaiine/Oasisic-Icons/main/icons/Apple/Apple/Apple.png
     proxies:
       - DIRECT
-      - 🚀 默认代理
+      - 默认代理
+      - 自动选择
 
-  - name: ♻️ 自动选择
+  - name: 漏网之鱼
+    type: select
+    icon: https://raw.githubusercontent.com/Hawaiine/Oasisic-Icons/main/icons/System/Final/Final.png
+    proxies:
+      - 默认代理
+      - 自动选择
+      - DIRECT
+
+  - name: 直连
+    type: select
+    icon: https://raw.githubusercontent.com/Hawaiine/Oasisic-Icons/main/icons/System/Direct/Direct.png
+    proxies:
+      - DIRECT
+      - 默认代理
+
+  - name: 自动选择
     type: url-test
-    url: http://cp.cloudflare.com/
+    icon: https://raw.githubusercontent.com/Hawaiine/Oasisic-Icons/main/icons/System/Auto/Auto.png
+    url: http://1.1.1.1/generate_204
     interval: 300
-    tolerance: 50
-    timeout: 300
+    tolerance: 300
+    timeout: 3000
     max-failed-times: 3
     proxies: []
 
-  - name: 🔯 故障转移
+  - name: 故障转移
     type: fallback
-    url: http://cp.cloudflare.com/
+    icon: https://raw.githubusercontent.com/Hawaiine/Oasisic-Icons/main/icons/System/Lightning/Lightning.png
+    url: http://1.1.1.1/generate_204
     interval: 300
-    tolerance: 50
-    timeout: 300
+    tolerance: 300
+    timeout: 3000
     max-failed-times: 3
     proxies: []
 
-  - name: 🔮 负载均衡
+  - name: 负载均衡
     type: load-balance
+    icon: https://raw.githubusercontent.com/Hawaiine/Oasisic-Icons/main/icons/System/Global/Global.png
     strategy: consistent-hashing
-    url: http://cp.cloudflare.com/
+    url: http://1.1.1.1/generate_204
     interval: 300
-    tolerance: 50
-    timeout: 300
+    tolerance: 300
+    timeout: 3000
     max-failed-times: 3
     proxies: []
-     
+    
 rules:
+  - DOMAIN-KEYWORD,p2p,REJECT
+  - DOMAIN-KEYWORD,peer,REJECT
+  - DOMAIN-KEYWORD,pcdn,REJECT
+  - DOMAIN-SUFFIX,mountaintoys.cn,REJECT
+  - DOMAIN-REGEX,^.*pcdn.*\.biliapi\.net$,REJECT
+  - DOMAIN-SUFFIX,mcdn.bilivideo.com,REJECT
+  - DOMAIN-SUFFIX,mcdn.bilivideo.cn,REJECT
+  - DOMAIN-SUFFIX,szbdyd.com,REJECT
   - GEOSITE,category-ads-all,REJECT
+  - IP-CIDR,192.168.80.25/32,默认代理,no-resolve
   - DOMAIN,instant.arubanetworks.com,DIRECT
   - DOMAIN,setmeup.arubanetworks.com,DIRECT
   - DOMAIN,router.asus.com,DIRECT
@@ -266,83 +300,65 @@ rules:
   - DOMAIN-SUFFIX,zte.home,DIRECT
   - DOMAIN-SUFFIX,tplogin.cn,DIRECT
   - DOMAIN-SUFFIX,wifi.cmcc,DIRECT
-  - DOMAIN-SUFFIX,bilibili.com, 📺 Bilibili
-  - GEOSITE,bilibili, 📺 Bilibili
-  - GEOSITE,biliintl, 📺 Bilibili
-  - DOMAIN-SUFFIX,browserleaks.com, 🚀 默认代理
-  - DOMAIN-SUFFIX,ping.pe,🚀 默认代理
-  - DOMAIN-SUFFIX,dgameglobal.com,🎮 游戏
-  - DOMAIN-SUFFIX,wilds.monsterhunter.com,🎮 游戏
-  - DOMAIN-SUFFIX,capcom.com,🎮 游戏
-  - DOMAIN-SUFFIX,playfabapi.com,🎮 游戏
-  - DOMAIN-SUFFIX,playfab.com,🎮 游戏
-  - DOMAIN-SUFFIX,akamai.net,🎮 游戏
-  - DOMAIN-SUFFIX,cloudapp.azure.com,🎮 游戏
-  - PROCESS-NAME,CrashReport.exe,🎮 游戏
-  - PROCESS-NAME,InstallerMessage.exe,🎮 游戏
-  - PROCESS-NAME,MonsterHunterWilds.exe,🎮 游戏
-  - PROCESS-NAME,SGuard64.exe,🎮 游戏
-  - PROCESS-NAME,SGuardSvc64.exe,🎮 游戏
-  - PROCESS-NAME,SGuardUpdate64.exe,🎮 游戏
-  - PROCESS-NAME,Uninstall64.exe,🎮 游戏
-  - PROCESS-NAME,ACE-Service64.exe,🎮 游戏
-  - PROCESS-NAME,ACE-Setup64.exe,🎮 游戏
-  - PROCESS-NAME,GeckoParser.exe,🎮 游戏
-  - PROCESS-NAME,MetaperfCapturer.exe,🎮 游戏
-  - PROCESS-NAME,profiler-symbol-server.exe,🎮 游戏
-  - PROCESS-NAME,DownSysSymCache.exe,🎮 游戏
-  - PROCESS-NAME,dumpbin.exe,🎮 游戏
-  - PROCESS-NAME,Link.exe,🎮 游戏
-  - PROCESS-NAME,SymCacheGen.exe,🎮 游戏
-  - PROCESS-NAME,SymChk.exe,🎮 游戏
-  - PROCESS-NAME,WevtUtil.exe,🎮 游戏
-  - PROCESS-NAME,XPerf.exe,🎮 游戏
-  - PROCESS-NAME,DeltaForceClient-Win64-Shipping.exe,🎮 游戏
-  - PROCESS-NAME,INTLWebViewHelper.exe,🎮 游戏
-  - PROCESS-NAME,pfbs.exe,🎮 游戏
-  - PROCESS-NAME,UnrealCEFSubProcess.exe,🎮 游戏
-  - PROCESS-NAME,UE4PrereqSetup_x64.exe,🎮 游戏
-  - PROCESS-NAME,DeltaForceClient.exe,🎮 游戏
-  - PROCESS-NAME,EAAntiCheat.Installer.exe,🎮 游戏
-  - PROCESS-NAME,bf6.exe,🎮 游戏
-  - PROCESS-NAME,bf6.exe,🎮 游戏
-  - PROCESS-NAME,EAAntiCheat.GameServiceLauncher.exe,🎮 游戏
-  - PROCESS-NAME,EAAntiCheat.GameService.exe,🎮 游戏
-  - DOMAIN-SUFFIX,eaanticheat.ac.ea.com,🎮 游戏
-  - GEOSITE,steam@cn,🎯 直连
-  - GEOSITE,steam,🎮 steam
-  - GEOSITE,apple,🍎 Apple
-  - GEOSITE,private,🎯 直连
-  - GEOSITE,openai,🤖 ChatGPT
-  - GEOSITE,google-gemini,🤖 ChatGPT
-  - GEOSITE,github,👨🏿‍💻 GitHub
-  - GEOSITE,onedrive,🐬 OneDrive
-  - GEOSITE,microsoft,🪟 Microsoft
-  - GEOSITE,youtube,📹 YouTube
-  - GEOSITE,google,🍀 Google
-  - GEOSITE,tiktok,🎵 TikTok
-  - GEOSITE,speedtest,✈️ Speedtest
-  - GEOSITE,telegram,📲 Telegram
-  - GEOSITE,netflix,🎥 NETFLIX
-  - GEOSITE,paypal,💶 PayPal
-  - GEOSITE,gfw,🚀 默认代理
-  - GEOSITE,category-dev,🚀 默认代理
-  - DOMAIN-SUFFIX,cloudflare-dns.com,🚀 默认代理
-  - DOMAIN-SUFFIX,api.nn.ci,🚀 默认代理
-  - DOMAIN-SUFFIX,api.ipify.org,🚀 默认代理
-  - DOMAIN-SUFFIX,gsas.apple.com,🚀 默认代理
-  - DOMAIN-SUFFIX,hotmail.com,🚀 默认代理
-  - GEOSITE,CN,🎯 直连
+  - DOMAIN-SUFFIX,halocloudnet.com,DIRECT
+  - DOMAIN-SUFFIX,bilibili.com, Bilibili
+  - GEOSITE,bilibili, Bilibili
+  - GEOSITE,biliintl, Bilibili
+  - DOMAIN-SUFFIX,twilio.com,默认代理
+  - DOMAIN-SUFFIX,browserleaks.com,DIRECT
+  - DOMAIN-SUFFIX,dgameglobal.com,游戏
+  - DOMAIN-SUFFIX,wilds.monsterhunter.com,游戏
+  - DOMAIN-SUFFIX,capcom.com,游戏
+  - DOMAIN-SUFFIX,playfabapi.com,游戏
+  - DOMAIN-SUFFIX,playfab.com,游戏
+  - DOMAIN-SUFFIX,akamai.net,游戏
+  - DOMAIN-SUFFIX,cloudapp.azure.com,游戏
+  - PROCESS-NAME,CrashReport.exe,游戏
+  - PROCESS-NAME,InstallerMessage.exe,游戏
+  - PROCESS-NAME,MonsterHunterWilds.exe,游戏
+  - DOMAIN-SUFFIX,eaanticheat.ac.ea.com,游戏
+  - PROCESS-NAME,EAAntiCheat.Installer.exe,游戏
+  - PROCESS-NAME,bf6.exe,游戏
+  - PROCESS-NAME,EAAntiCheat.GameServiceLauncher.exe,游戏
+  - PROCESS-NAME,EAAntiCheat.GameService.exe,游戏
+  - DOMAIN-SUFFIX,eaanticheat.ac.ea.com,游戏
+  - GEOSITE,steam@cn,直连
+  - GEOSITE,steam,steam
+  - GEOSITE,apple,Apple
+  - GEOSITE,private,直连
+  - GEOSITE,category-ai-!cn,AI
+  - GEOSITE,openai,AI
+  - GEOSITE,google-gemini,AI
+  - GEOSITE,github,GitHub
+  - GEOSITE,onedrive,OneDrive
+  - GEOSITE,microsoft,Microsoft
+  - GEOSITE,youtube,YouTube
+  - GEOSITE,google,Google
+  - GEOSITE,tiktok,TikTok
+  - GEOSITE,speedtest,Speedtest
+  - PROCESS-NAME,Telegram.exe,Telegram
+  - PROCESS-NAME,org.telegram.messenger.web,Telegram
+  - GEOSITE,telegram,Telegram
+  - GEOSITE,netflix,NETFLIX
+  - GEOSITE,paypal,PayPal
+  - GEOSITE,gfw,默认代理
+  - GEOSITE,category-dev,默认代理
+  - DOMAIN-SUFFIX,cloudflare-dns.com,默认代理
+  - DOMAIN-SUFFIX,api.nn.ci,默认代理
+  - DOMAIN-SUFFIX,api.ipify.org,默认代理
+  - DOMAIN-SUFFIX,gsas.apple.com,默认代理
+  - DOMAIN-SUFFIX,hotmail.com,默认代理
+  - GEOSITE,CN,直连
 
-  - GEOIP,private,🎯 直连,no-resolve
-  - IP-CIDR,1.0.0.1/32,🚀 默认代理,no-resolve
-  - IP-CIDR,1.1.1.1/32,🚀 默认代理,no-resolve
-  - IP-CIDR,8.8.8.8/32,🚀 默认代理,no-resolve
-  - IP-CIDR,8.8.4.4/32,🚀 默认代理,no-resolve
-  - GEOIP,google,🍀 Google
-  - GEOIP,netflix,🎥 NETFLIX
-  - GEOIP,telegram,📲 Telegram
-  - GEOIP,CN,🎯 直连
+  - GEOIP,private,直连,no-resolve
+  - IP-CIDR,1.0.0.1/32,默认代理,no-resolve
+  - IP-CIDR,1.1.1.1/32,默认代理,no-resolve
+  - IP-CIDR,8.8.8.8/32,默认代理,no-resolve
+  - IP-CIDR,8.8.4.4/32,默认代理,no-resolve
+  - GEOIP,google,Google
+  - GEOIP,netflix,NETFLIX
+  - GEOIP,telegram,Telegram
+  - GEOIP,CN,直连
   - IP-CIDR,10.0.0.0/8,DIRECT,no-resolve
   - IP-CIDR,172.16.0.0/12,DIRECT,no-resolve
   - IP-CIDR,192.168.0.0/16,DIRECT,no-resolve
@@ -354,4 +370,4 @@ rules:
   - IP-CIDR6,fc00::/7,DIRECT,no-resolve
   - IP-CIDR6,fe80::/10,DIRECT,no-resolve
   - IP-CIDR6,fd00::/8,DIRECT,no-resolve
-  - MATCH,🐟 漏网之鱼
+  - MATCH,漏网之鱼
