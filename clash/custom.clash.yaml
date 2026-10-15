@@ -56,6 +56,7 @@ dns:
   fake-ip-range: 198.18.0.1/16
   fake-ip-filter-mode: rule
   fake-ip-filter:
+    - "rule-set,fake-ip-filter"
     - "geosite:private"
     - "geosite:connectivity-check"
     - "geosite:cn"
@@ -65,7 +66,7 @@ rule-providers:
     type: http
     behavior: classical
     format: yaml
-    url: "https://raw.githubusercontent.com/你的用户名/你的仓库/main/rules/fake-ip-filter.yaml"
+    url: "https://raw.githubusercontent.com/mocchen/cssmeihua/refs/heads/mochen/clash/rules/fake-ip-filter.yaml"
     interval: 86400
     path: ./rules/fake-ip-filter.yaml
     proxy: DIRECT
