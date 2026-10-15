@@ -31,6 +31,28 @@ payload:
   - 'DOMAIN-SUFFIX,localhost.ptlogin2.qq.com'
   - 'DOMAIN-SUFFIX,localhost.sec.qq.com'
   - 'DOMAIN-REGEX,^localhost\..+\.weixin\.qq\.com$'
+  # —— 游戏平台（补回）——
+  - 'DOMAIN-SUFFIX,steamcontent.com'
+  - 'DOMAIN-SUFFIX,srv.nintendo.net'
+  - 'DOMAIN-SUFFIX,cdn.nintendo.net'
+  - 'DOMAIN-REGEX,^xbox\..+\.microsoft\.com$'
+  - 'DOMAIN-REGEX,^.+\.xboxlive\.com$'
+  - 'DOMAIN-SUFFIX,xnotify.xboxlive.com'
+  # —— 苹果系统更新 ——
+  - 'DOMAIN-SUFFIX,mesu.apple.com'
+  - 'DOMAIN-SUFFIX,swscan.apple.com'
+  - 'DOMAIN-SUFFIX,swquery.apple.com'
+  - 'DOMAIN-SUFFIX,swdownload.apple.com'
+  - 'DOMAIN-SUFFIX,swcdn.apple.com'
+  - 'DOMAIN-SUFFIX,swdist.apple.com'
+  # —— Netflix ——
+  - 'DOMAIN-SUFFIX,nflxvideo.net'
+  # —— AdGuard 规则更新（补回）——
+  - 'DOMAIN-SUFFIX,adguardteam.github.io'
+  - 'DOMAIN-SUFFIX,adrules.top'
+  - 'DOMAIN-SUFFIX,anti-ad.net'
+  - 'DOMAIN-SUFFIX,local.adguard.org'
+  - 'DOMAIN-SUFFIX,static.adtidy.org'
   # —— STUN / 路由器 / 其它 ——
   - 'DOMAIN-REGEX,^stun\..+'
   - 'DOMAIN-SUFFIX,heartbeat.belkin.com'
