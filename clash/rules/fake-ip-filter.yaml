@@ -47,7 +47,7 @@ payload:
   - 'DOMAIN-SUFFIX,swdist.apple.com'
   # —— Netflix ——
   - 'DOMAIN-SUFFIX,nflxvideo.net'
-  # —— AdGuard 规则更新（补回）——
+  # —— AdGuard 规则更新 ——
   - 'DOMAIN-SUFFIX,adguardteam.github.io'
   - 'DOMAIN-SUFFIX,adrules.top'
   - 'DOMAIN-SUFFIX,anti-ad.net'
