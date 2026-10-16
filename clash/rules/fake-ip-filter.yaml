@@ -42,7 +42,7 @@ payload:
   - 'DOMAIN-SUFFIX,anti-ad.net'
   - 'DOMAIN-SUFFIX,static.adtidy.org'
   # —— STUN / 网络设备 ——
-  - 'DOMAIN-REGEX,^stun\..+'
+  - 'DOMAIN-REGEX,(^|\.)stun\.'
   - 'DOMAIN-SUFFIX,heartbeat.belkin.com'
   - 'DOMAIN-SUFFIX,linksys.com'
   - 'DOMAIN-SUFFIX,linksyssmartwifi.com'
