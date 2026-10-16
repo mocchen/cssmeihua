@@ -36,6 +36,10 @@ dns:
     - https://doh.pub/dns-query
     - 223.5.5.5
   nameserver-policy:
+    # 内网私有域名交给系统/路由器解析
+    '+.home': 'dhcp://system'
+    '+.lan': 'dhcp://system'
+    '+.local': 'dhcp://system'
     geosite:cn,private: 
       - https://223.5.5.5/dns-query
       - https://doh.pub/dns-query  
