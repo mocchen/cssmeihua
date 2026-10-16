@@ -37,11 +37,11 @@ dns:
     - 223.5.5.5
   nameserver-policy:
     geosite:private:
-      - dhcp://system
+      - system
     DOMAIN-SUFFIX,wifi.cmcc: 
-      - dhcp://system
+      - system
     DOMAIN-SUFFIX,p.to: 
-      - dhcp://system
+      - system
     geosite:cn: 
       - https://223.5.5.5/dns-query
       - https://doh.pub/dns-query  
